@@ -73,7 +73,7 @@ body{
 .smoke{position:absolute;width:30px;height:40px;border-radius:50%;left:45%;top:12%;
   background:radial-gradient(ellipse,rgba(70,65,60,.75),transparent 70%);opacity:0;pointer-events:none}
 .smoke.on{animation:steamUp 1.1s ease-out infinite}
-#nowHint{position:absolute;top:-8px;left:50%;transform:translateX(-50%) scale(0);
+#nowHint{position:absolute;top:-30px;left:50%;transform:translateX(-50%) scale(0);
   background:var(--orange);color:#fff;font-size:21px;padding:5px 18px;border-radius:999px;
   box-shadow:0 3px 0 #c55f0e;transition:transform .15s;z-index:4;white-space:nowrap}
 #nowHint.on{transform:translateX(-50%) scale(1);animation:nowPulse .4s infinite}
@@ -97,14 +97,31 @@ body{
 #flash.bad{background:radial-gradient(circle,rgba(60,50,40,.3),transparent 70%);animation:flashA .45s ease-out}
 @keyframes flashA{0%{opacity:1}100%{opacity:0}}
 
-/* ── 뒤집기 버튼 ─────────────────────── */
-#flipBtn{margin:8px 16px 18px;height:110px;border:none;background:transparent;
-  background-image:url('assets/btn-wide-orange.webp');background-size:100% 100%;background-repeat:no-repeat;
-  color:#fff;font-family:inherit;font-size:42px;letter-spacing:2px;
-  text-shadow:0 3px 0 rgba(120,55,0,.55);cursor:pointer;filter:drop-shadow(0 6px 6px rgba(120,60,10,.35))}
-#flipBtn:active{transform:translateY(5px);filter:drop-shadow(0 2px 3px rgba(120,60,10,.35))}
-#flipBtn .sub{display:block;font-size:16px;opacity:.95;margin-top:-4px}
+/* ── 탭! 원형 버튼 ────────────────────── */
+#flipBtn{display:block;width:min(42vw,150px);aspect-ratio:560/518;margin:2px auto 16px;border:none;background:transparent;
+  background-image:url('assets/btn-round.webp');background-size:contain;background-repeat:no-repeat;background-position:center;
+  color:#fff;font-family:inherit;font-size:46px;letter-spacing:2px;line-height:1;
+  text-shadow:0 3px 0 rgba(120,55,0,.6);cursor:pointer;filter:drop-shadow(0 7px 7px rgba(120,60,10,.4))}
+#flipBtn:active{transform:scale(.93);filter:drop-shadow(0 2px 3px rgba(120,60,10,.4))}
+#flipBtn .sub{display:block;font-size:14px;opacity:.95;margin-top:6px;letter-spacing:0}
+#tapHint{text-align:center;font-size:14px;color:#8a6a45;margin-top:-10px;margin-bottom:14px}
 #flipBtn:disabled{filter:grayscale(.5) brightness(.92)}
+
+/* 불꽃 */
+#flames{position:absolute;inset:-13%;width:126%;height:126%;object-fit:contain;
+  pointer-events:none;animation:flick .5s ease-in-out infinite alternate;z-index:0}
+@keyframes flick{0%{opacity:.85;transform:scale(1)}100%{opacity:1;transform:scale(1.03)}}
+
+/* 전 선택 카드 */
+.selRow{display:flex;gap:10px;justify-content:center;margin:10px 0 14px}
+.typeCard{flex:1;max-width:110px;border:3px solid #d8bd8f;border-radius:16px;padding:8px 6px 9px;
+  background:#fdf3df;cursor:pointer;text-align:center;transition:transform .12s,border-color .12s}
+.typeCard img{width:100%;aspect-ratio:1;object-fit:contain;border-radius:10px;background:#f0e0c2}
+.typeCard .tn{font-size:17px;color:#5b3a1e;margin-top:4px;line-height:1.2}
+.typeCard .tt{font-size:12px;color:#a08464;line-height:1.25;margin-top:2px;font-family:'Pretendard','Noto Sans KR',sans-serif;font-weight:600}
+.typeCard.sel{border-color:var(--orange);background:#ffeccf;transform:translateY(-4px);box-shadow:0 5px 0 #d8955a}
+.card .ajBig{width:104px;height:104px;border-radius:50%;border:3px solid #c9a875;object-fit:cover;margin-top:-58px;background:var(--paper)}
+#homeBtn{display:block;margin:10px auto 0;background:none;border:none;color:#8a6a45;font-size:16px;font-family:inherit;cursor:pointer;text-decoration:underline}
 
 /* ── 오버레이 ────────────────────────── */
 .overlay{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;
@@ -140,8 +157,8 @@ body{
   #bubble{font-size:16px;padding:5px 12px}
   #gaugeWrap{width:min(64vw,280px,26dvh)}
   #panWrap{width:min(64vw,280px,38dvh)}
-  #flipBtn{height:92px;font-size:34px;margin:4px 14px 12px}
-  #flipBtn .sub{font-size:14px}
+  #flipBtn{width:min(34vw,120px);font-size:36px;margin:0 auto 10px}
+  #flipBtn .sub{font-size:12px}
   .card{padding:18px 16px;max-height:94dvh;overflow:auto}
   .card .stackImg{width:110px}
   .bigBtn{height:74px;font-size:27px}
@@ -158,11 +175,6 @@ body{
     <div class="stat" id="statCombo"><div class="label">콤보</div><div class="value" id="vCombo">0</div></div>
   </header>
 
-  <div id="ajRow">
-    <img id="ajImg" src="assets/ajumma-happy.webp" alt="전집 아주머니">
-    <div id="bubble">노릇노릇해지면 눌러요!</div>
-  </div>
-
   <div id="playArea">
     <div id="gaugeWrap">
       <svg id="gauge" viewBox="0 0 200 136" aria-hidden="true">
@@ -176,6 +188,7 @@ body{
     <div id="panWrap">
       <div id="typeBadge"></div>
       <div id="nowHint">지금이야!</div>
+      <img id="flames" src="assets/flames.webp" alt="">
       <img id="panImg" src="assets/pan.webp" alt="후라이팬">
       <div id="jeonStack">
         <img class="jstage" id="jRaw" alt="">
@@ -190,30 +203,40 @@ body{
     <div id="scorePop"></div>
   </div>
 
-  <button id="flipBtn" type="button">뒤집기!<span class="sub">화면 아무 데나 눌러도 돼요</span></button>
+  <div id="ajRow">
+    <img id="ajImg" src="assets/ajumma-happy.webp" alt="전집 아주머니">
+    <div id="bubble">노릇노릇해지면 눌러요!</div>
+  </div>
+
+  <button id="flipBtn" type="button">탭!<span class="sub">뒤집기</span></button>
 </div>
 <div id="flash"></div>
 
 <div class="overlay" id="startOv">
   <div class="card">
+    <img class="ajBig" src="assets/ajumma-happy.webp" alt="전집 아주머니">
     <img class="titleImg" src="assets/title.webp" alt="전 뒤집기">
-    <img class="stackImg" src="assets/jeon-stack.webp" alt="전 한 접시">
-    <p class="sub">지글지글~ 노릇노릇해지는 순간<br><b>딱 한 번</b> 누르면 돼요!</p>
-    <div class="typeChips"><span>부추전</span><span>김치전</span><span>해물전</span></div>
+    <p class="sub">오늘은 어떤 전을 부칠까요?</p>
+    <div class="selRow" id="selRow">
+      <div class="typeCard sel" data-t="buchu"><img src="assets/buchu-gold.webp" alt=""><div class="tn">부추전</div><div class="tt">보통 속도<br>넉넉한 타이밍</div></div>
+      <div class="typeCard" data-t="kimchi"><img src="assets/kimchi-gold.webp" alt=""><div class="tn">김치전</div><div class="tt">색이 진해<br>살짝 헷갈림</div></div>
+      <div class="typeCard" data-t="haemul"><img src="assets/haemul-gold.webp" alt=""><div class="tn">해물전</div><div class="tt">천천히 익고<br>타이밍 짧음</div></div>
+    </div>
     <button class="bigBtn yellow" id="startBtn" type="button">시작하기</button>
-    <p class="hintLine">60초 동안 최대한 많이!<br>너무 빨리 누르면 덜 익고, 늦으면 타버려요</p>
+    <p class="hintLine">60초 동안 노릇노릇할 때 딱 한 번!<br>너무 빨리 누르면 덜 익고, 늦으면 타버려요</p>
   </div>
 </div>
 
 <div class="overlay hidden" id="endOv">
   <div class="card">
-    <img class="stackImg" id="endStack" src="assets/jeon-stack.webp" alt="">
-    <h1 style="font-size:34px">오늘 전 <span id="endJeon">0</span>장!</h1>
+    <h1 id="endTitle" style="font-size:38px">오늘 전 <span id="endJeon" style="color:var(--orange)">0</span>장!</h1>
     <div id="stars"></div>
+    <img class="stackImg" id="endStack" src="assets/jeon-stack.webp" alt="">
     <div id="endScore">0</div>
     <div id="endCount">점수</div>
     <div id="endCombo"></div>
     <button class="bigBtn green" id="retryBtn" type="button">다시 하기</button>
+    <button id="homeBtn" type="button">처음으로</button>
   </div>
 </div>
 
@@ -328,7 +351,7 @@ function forceStage(name){for(const k in stages)stages[k].style.opacity=k===name
 
 /* ═══════════ 게임 상태 ═══════════ */
 const G={playing:false,score:0,combo:0,best:0,count:0,timeLeft:60,
- jeon:null,last2:[],lastTs:0,raf:0};
+ jeon:null,selType:TYPES[0],lastTs:0,raf:0};
 
 const BUB={
  start:'노릇노릇해지면 눌러요!',
@@ -352,9 +375,7 @@ function flash(cls){flashEl.className='';void flashEl.offsetWidth;flashEl.classN
 
 /* ── 한 장 사이클 ── */
 function nextJeon(){
- let type;do{type=TYPES[Math.floor(Math.random()*TYPES.length)];}
- while(G.last2.length===2&&G.last2[0]===G.last2[1]&&type.id===G.last2[0]);
- G.last2.push(type.id);if(G.last2.length>2)G.last2.shift();
+ const type=G.selType;
  G.jeon={type,phase:'oil',t0:performance.now(),p:0,warned:false};
  typeBadge.textContent=type.name;typeBadge.classList.add('on');
  for(const s in stages){stages[s].src=`assets/${type.id}-${s}.webp`;stages[s].style.opacity=0;}
@@ -466,6 +487,13 @@ document.addEventListener('pointerdown',e=>{
 $('flipBtn').addEventListener('pointerdown',e=>{e.preventDefault();onTap();});
 $('startBtn').addEventListener('click',startGame);
 $('retryBtn').addEventListener('click',startGame);
+$('homeBtn').addEventListener('click',()=>{endOv.classList.add('hidden');startOv.classList.remove('hidden');
+say(BUB.start);});
+document.querySelectorAll('.typeCard').forEach(c=>{
+ c.addEventListener('pointerdown',()=>{
+  document.querySelectorAll('.typeCard').forEach(x=>x.classList.remove('sel'));
+  c.classList.add('sel');
+  G.selType=TYPES.find(t=>t.id===c.dataset.t);});});
 document.addEventListener('contextmenu',e=>e.preventDefault());
 </script>
 </body>
