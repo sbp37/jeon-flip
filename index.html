@@ -143,6 +143,24 @@ body{
 #stars{font-size:40px;letter-spacing:6px;margin:6px 0}
 #stars .off{opacity:.28}
 .hintLine{font-size:15px;color:#a08464;font-weight:600;margin-top:12px;line-height:1.6}
+@media (max-height: 720px){
+  #hud{padding:8px 12px 4px}
+  .stat{padding:4px 2px;border-radius:12px}
+  .stat .value{font-size:24px}
+  .stat .label{font-size:12px}
+  #ajRow{min-height:56px;padding:0 14px}
+  #ajImg{width:46px;height:46px}
+  #bubble{font-size:16px;padding:6px 12px}
+  #gaugeWrap{width:min(66vw,300px,27dvh)}
+  #panWrap{width:min(66vw,300px,40dvh)}
+  #flipBtn{height:88px;font-size:34px;margin:4px 14px 14px}
+  #flipBtn .sub{font-size:14px}
+  .card{padding:20px 18px;max-height:94dvh;overflow:auto}
+  .card h1{font-size:34px}
+  .card img.ajFace{width:88px;height:88px}
+  .bigBtn{height:72px;font-size:26px}
+  #endScore{font-size:44px}
+}
 </style>
 </head>
 <body>
@@ -332,8 +350,7 @@ $('arcOver').setAttribute('d',arcPath(win[1],.98));}
 
 /* ═══════════ 게임 상태 ═══════════ */
 const G={playing:false,score:0,combo:0,best:0,count:0,timeLeft:60,
- jeon:null, // {type,phase,t0,resolved}
- lastTs:0,raf:0};
+ jeon:null,last2:[],lastTs:0,raf:0};
 
 const BUB={
  start:'노릇노릇해지면 눌러요!',
@@ -376,7 +393,9 @@ function buildToppings(type){
 
 /* ── 한 장 사이클 ── */
 function nextJeon(){
- const type=TYPES[Math.floor(Math.random()*TYPES.length)];
+ let type;do{type=TYPES[Math.floor(Math.random()*TYPES.length)];}
+ while(G.last2.length===2&&G.last2[0]===G.last2[1]&&type.id===G.last2[0]);
+ G.last2.push(type.id);if(G.last2.length>2)G.last2.shift();
  G.jeon={type,phase:'oil',t0:performance.now(),p:0,warned:false};
  typeBadge.textContent=type.name;typeBadge.classList.add('on');
  oilEl.classList.add('on');
