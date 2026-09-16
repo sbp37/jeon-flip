@@ -82,12 +82,14 @@ body{
 .steam{position:absolute;width:14px;height:22px;border-radius:50%;
   background:radial-gradient(ellipse,rgba(255,255,255,.75),transparent 70%);
   opacity:0;pointer-events:none}
+.steam.s1{left:38%;top:22%}.steam.s2{left:56%;top:28%}.steam.s3{left:48%;top:14%}
 .steam.on{animation:steamUp 1.4s ease-out infinite}
 .steam.on.s2{animation-delay:.45s}.steam.on.s3{animation-delay:.9s}
 @keyframes steamUp{0%{opacity:0;transform:translateY(0) scale(.7)}25%{opacity:.9}100%{opacity:0;transform:translateY(-70px) scale(1.5)}}
-.smoke{position:absolute;width:18px;height:26px;border-radius:50%;
-  background:radial-gradient(ellipse,rgba(90,90,90,.6),transparent 70%);opacity:0;pointer-events:none}
-.smoke.on{animation:steamUp 1.2s ease-out infinite}
+.smoke{position:absolute;width:26px;height:36px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(70,65,60,.8),transparent 70%);opacity:0;pointer-events:none}
+.smoke.sm1{left:46%;top:18%}
+.smoke.on{animation:steamUp 1.1s ease-out infinite}
 #nowHint{position:absolute;top:-34px;left:50%;transform:translateX(-50%) scale(0);
   background:var(--orange);color:#fff;font-size:20px;font-weight:900;padding:6px 18px;border-radius:999px;
   box-shadow:0 3px 0 var(--orange-d);transition:transform .15s;z-index:4;white-space:nowrap}
