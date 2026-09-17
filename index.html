@@ -53,7 +53,7 @@ body.inGame::before{opacity:1}
 #perfectTrack{display:flex;align-items:center;gap:4px;color:#8a6a45;white-space:nowrap}
 .pip{width:9px;height:9px;border:2px solid #d8bd8f;border-radius:50%;background:#f3e6cc}
 .pip.on{background:#ffd54a;border-color:#e8a52a;box-shadow:0 0 6px #ffd54a}
-#scoreMulti{min-width:30px;text-align:right;color:var(--orange);font-size:14px;white-space:nowrap}
+#scoreMulti{min-width:34px;text-align:right;color:var(--orange);font-size:14px;white-space:nowrap;padding-right:2px}
 #statusStrip.fever{background:#fff0b8;border-color:#f0a02d;animation:feverGlow .45s ease-in-out infinite alternate}
 #statusStrip.fever #timeFill{background:linear-gradient(90deg,#ffd54a,#ffb43a)}
 #statusStrip.fever #perfectTrack{color:#c55f0e;font-size:13px}
@@ -102,7 +102,7 @@ body.inGame::before{opacity:1}
 #ingredientTray.hidden{display:none}
 .ingredientBtn{width:30%;max-width:112px;border:3px solid #d8bd8f;border-radius:15px;background:#fdf3df;padding:5px;color:#5b3a1e;
   font-family:inherit;font-size:16px;cursor:pointer;box-shadow:0 3px 0 #b8946a}
-.ingredientBtn img{display:block;width:42px;height:42px;object-fit:contain;margin:0 auto 2px;border-radius:50%;background:#f0e0c2}
+.ingredientBtn img{display:block;width:44px;height:44px;object-fit:contain;padding:4px;margin:0 auto 2px;border-radius:50%;background:#f0e0c2;border:2px solid #d8bd8f}
 .ingredientBtn:active{transform:translateY(2px);box-shadow:0 1px 0 #b8946a}
 .ingredientBtn.wrong{animation:ingredientWrong .35s;background:#ffe1d7;border-color:#e05b3a}
 @keyframes ingredientWrong{25%,75%{transform:translateX(-4px)}50%{transform:translateX(4px)}}
@@ -167,7 +167,7 @@ body.inGame::before{opacity:1}
 
 /* 결과 토스트 */
 #toast{position:absolute;top:6%;left:50%;transform:translate(-50%,-50%) scale(0);
-  max-width:90vw;font-size:27px;color:#fff;text-align:center;text-shadow:0 3px 0 rgba(0,0,0,.3);
+  max-width:92vw;font-size:24px;color:#fff;text-align:center;text-shadow:0 3px 0 rgba(0,0,0,.3);
   z-index:9;white-space:nowrap;pointer-events:none}
 #toast.show{animation:toastPop 1s ease-out forwards}
 @keyframes toastPop{0%{transform:translate(-50%,-50%) scale(.4);opacity:0}15%{transform:translate(-50%,-50%) scale(1.15);opacity:1}30%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{transform:translate(-50%,-80%) scale(1);opacity:0}}
@@ -409,9 +409,9 @@ body.inGame::before{opacity:1}
 
   <div id="actionTitle" aria-hidden="true">기름 두르기!</div>
   <div id="ingredientTray" class="hidden" role="group" aria-label="전 재료 선택">
-    <button class="ingredientBtn" type="button" data-ingredient="buchu"><img src="assets/buchu-gold.webp" alt="">부추</button>
-    <button class="ingredientBtn" type="button" data-ingredient="kimchi"><img src="assets/kimchi-gold.webp" alt="">김치</button>
-    <button class="ingredientBtn" type="button" data-ingredient="haemul"><img src="assets/haemul-gold.webp" alt="">해물</button>
+    <button class="ingredientBtn" type="button" data-ingredient="buchu"><img src="assets/topping-buchu.svg" alt="">부추</button>
+    <button class="ingredientBtn" type="button" data-ingredient="kimchi"><img src="assets/topping-kimchi.svg" alt="">김치</button>
+    <button class="ingredientBtn" type="button" data-ingredient="haemul"><img src="assets/topping-haemul.svg" alt="">해물</button>
   </div>
   <button id="flipBtn" type="button">기름!<span class="sub">팬에 두르기</span></button>
   <button id="pauseBtn" type="button" aria-label="게임 일시정지" title="일시정지"><span class="iconPause" aria-hidden="true"></span></button>
@@ -686,9 +686,9 @@ function configurePhase(phase){if(!G.jeon)return;G.jeon.phase=phase;updateProces
  if(phase==='oil'){drawGauge([.02,.98]);gaugeLbl.textContent='기름병을 팬 둘레로 돌리세요';
   setAction('기름!','기름병을 빙~ 돌려요');say('팬 위 기름병을 잡고 반 바퀴 돌려요!');panWrap.classList.add('oilReady');oilBottle.classList.add('on');updateOilVisual();}
  else if(phase==='batter'){maybeHideOrder('batter');drawGauge(BATTER_WIN);setNeedle(G.jeon.batterLevel);gaugeLbl.textContent='누르고 있다가 초록에서 떼기';setAction('꾹!','누르고 있다가 반죽 붓기');say('누르고 있다가 알맞을 때 떼요!');flipBtn.focus({preventScroll:true});}
- else if(phase==='ingredient'){maybeHideOrder('ingredient');setNeedle(.7);gaugeLbl.textContent=`${G.jeon.type.ingredient}를 골라 넣어요`;setAction('재료','주문 재료를 골라요',{hidden:true});say(`${G.jeon.type.ingredient}를 넣어주세요!`);ingredientTray.classList.remove('hidden');ingredientBtns[0].focus({preventScroll:true});}
+ else if(phase==='ingredient'){maybeHideOrder('ingredient');setNeedle(.7);gaugeLbl.textContent=`${eul(G.jeon.type.ingredient)} 골라 넣어요`;setAction('재료','주문 재료를 골라요',{hidden:true});say(`${eul(G.jeon.type.ingredient)} 넣어주세요!`);ingredientTray.classList.remove('hidden');ingredientBtns[0].focus({preventScroll:true});}
  else if(phase==='pour'){gaugeLbl.textContent='반죽과 재료가 익는 중';setAction('잠깐!','반죽 올리는 중',{disabled:true});ingredientTray.classList.add('hidden');}
- else if(phase==='cook'){drawGauge(currentWindow());gaugeLbl.textContent=G.jeon.side===1?'앞면 익는 중':'뒷면 익는 중';setAction('탭!',G.jeon.side===1?'노릇할 때 탭!':'뒷면도 노릇할 때 탭!');flipBtn.focus({preventScroll:true});}
+ else if(phase==='cook'){drawGauge(currentWindow());gaugeLbl.textContent=G.jeon.side===1?'앞면 익는 중':'뒷면 익는 중';setAction('탭!',G.jeon.side===1?'노릇할 때 탭!':'뒷면도 노릇할 때 탭!');if(G.jeon.side===1)say(pick(BUB.cook));flipBtn.focus({preventScroll:true});}
  else if(phase==='flipping'){setAction('홱!','뒤집는 중',{disabled:true});}
  else if(phase==='serve'){setNeedle(1);gaugeLbl.textContent='완성! 손님께 내는 중';setAction('서빙!','손님께 내는 중',{disabled:true});}
  else if(phase==='serving'){setAction('서빙!','내는 중',{disabled:true});}
@@ -708,6 +708,7 @@ addEventListener('load',()=>PRE.forEach(s=>{const i=new Image();i.src=s;}));
 
 const BUB={
  start:'노릇노릇해지면 눌러요!',
+ cook:['노릇노릇해지면 탭!','색이 변하는 걸 잘 봐요~','너무 일찍도, 너무 늦게도 안 돼요!'],
  wait:['조금만 더~','아직이에요~','기다려요~'],
  flip:['홱~ 잘 뒤집었어요!','뒤집기 성공!','손놀림이 좋네요~'],
  pflip:['찰지게 뒤집었어요!!','와~ 예술이에요!'],
@@ -717,6 +718,7 @@ const BUB={
  early:['어이구, 덜 익었어요','조금 일렀어요~'],
  burnt:['아이고 탔어요 ㅠㅠ','타버렸네…','아까워라…']};
 const pick=a=>a[Math.floor(Math.random()*a.length)];
+const eul=w=>{const c=w.charCodeAt(w.length-1);return w+((c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28!==0)?'을':'를');};
 
 let faceT=0;
 function say(txt,face){bubble.textContent=txt;bubble.classList.remove('pop');void bubble.offsetWidth;
@@ -855,7 +857,7 @@ function chooseIngredient(id,button){const j=G.jeon;if(!j||j.phase!=='ingredient
  if(id!==j.type.id){j.wrongIngredients++;j.prepQuality=Math.max(35,j.prepQuality-30);j.patience=Math.max(0,j.patience-2.5);updatePatience();
   G.combo=0;G.perfectStreak=0;stopFever();updateStatus();vCombo.textContent='0';statCombo.classList.remove('hot');
   const wasHidden=j.orderHidden;revealOrder();
-  button.classList.remove('wrong');void button.offsetWidth;button.classList.add('wrong');toast(wasHidden?'앗, 주문이 달라요! 콤보 초기화':'주문과 다른 재료! 콤보 초기화','bad');say(`${j.type.ingredient}를 넣어야 해요!`,'surprised');Sfx.bad();Sfx.vibrate([45,30,45]);
+  button.classList.remove('wrong');void button.offsetWidth;button.classList.add('wrong');toast(wasHidden?'주문이 달라요! 콤보 0':'다른 재료예요! 콤보 0','bad');say(`${eul(j.type.ingredient)} 넣어야 해요!`,'surprised');Sfx.bad();Sfx.vibrate([45,30,45]);
   if(j.patience<=0)resolveCustomerLost();return;}
  const remembered=j.orderHidden;revealOrder();
  toppingBits.src=`assets/topping-${id}.svg`;toppingBits.className='on';
@@ -868,7 +870,7 @@ function resolveCustomerLost(){const j=G.jeon;if(!j||j.resolved)return;j.resolve
  const penalty=Math.min(100,G.score);G.score-=penalty;G.combo=0;G.perfectStreak=0;stopFever();updateStatus();vScore.textContent=G.score;vCombo.textContent='0';
  statCombo.classList.remove('hot');flipBtn.classList.remove('holding');panWrap.classList.remove('oilReady','oilDragging');oilBottle.classList.remove('on','dragging');G.oilDragging=false;G.oilAuto=false;
  setAction('다음!','새 주문 받는 중',{disabled:true});ingredientTray.classList.add('hidden');
- toast('손님이 떠났어요'+(penalty?` · -${penalty}점`:''),'bad');if(penalty)popScore(-penalty);say('너무 오래 기다렸어요!','worried');Sfx.bad();Sfx.vibrate([100,50,100]);
+ toast('손님이 떠났어요'+(penalty?` -${penalty}점`:''),'bad');if(penalty)popScore(-penalty);say('너무 오래 기다렸어요!','worried');Sfx.bad();Sfx.vibrate([100,50,100]);
  later(()=>{if(G.playing)nextJeon();},600);}
 
 /* 뒤집기 성공 → 뒷면 굽기로 진행 */
