@@ -43,6 +43,43 @@ body{
 #statusStrip.fever{background:#fff0b8;border-color:#f0a02d;animation:feverGlow .45s ease-in-out infinite alternate}
 #statusStrip.fever #perfectTrack{color:#c55f0e;font-size:15px}
 @keyframes feverGlow{to{box-shadow:0 0 15px #ffd54a,0 2px 0 #c55f0e}}
+#processSteps{display:flex;align-items:center;justify-content:center;gap:3px;margin:5px 14px 0;min-height:25px}
+.processStep{flex:1;max-width:82px;padding:3px 2px;border:2px solid #d8bd8f;border-radius:999px;background:rgba(253,246,233,.9);
+  color:#a08464;font-size:12px;text-align:center;white-space:nowrap;transition:.2s}
+.processStep.done{background:#e8f3ce;border-color:#9cbe62;color:#55782c}
+.processStep.active{background:#ffe2a8;border-color:#f08a2d;color:#8b4516;transform:translateY(-1px);box-shadow:0 2px 0 #d8955a}
+
+/* 주문·준비 과정 */
+#patienceWrap{position:absolute;z-index:4;left:18%;right:18%;top:48px;height:15px;border:2px solid #c9a875;border-radius:999px;
+  background:#f3e6cc;overflow:hidden;box-shadow:0 2px 0 rgba(80,50,20,.18)}
+#patienceBar{height:100%;width:100%;border-radius:inherit;background:linear-gradient(90deg,#7cb342,#b8d85f);transition:width .12s linear,background .2s}
+#patienceWrap.low #patienceBar{background:linear-gradient(90deg,#e05b3a,#f08a2d);animation:pulse .45s infinite}
+#patienceText{position:absolute;inset:0;text-align:center;font:10px/11px 'Jua',sans-serif;color:#4a3018;text-shadow:0 1px #fff}
+#oilSheen{position:absolute;z-index:1;left:27%;top:29%;width:46%;height:37%;border-radius:50%;opacity:0;transform:scale(.25) rotate(-12deg);
+  background:radial-gradient(ellipse at 35% 30%,rgba(255,255,230,.9),rgba(246,194,72,.58) 45%,rgba(224,149,25,.18) 72%,transparent 74%);
+  filter:blur(.5px);pointer-events:none}
+#oilSheen.on{animation:oilSpread .5s ease-out forwards}
+@keyframes oilSpread{60%{opacity:.85;transform:scale(1.08) rotate(4deg)}100%{opacity:.72;transform:scale(1) rotate(0)}}
+#batterBlob{position:absolute;z-index:1;left:50%;top:50%;width:55%;aspect-ratio:1;border-radius:47% 53% 45% 55%;opacity:0;
+  transform:translate(-50%,-50%) scale(var(--batter-scale,.2));background:radial-gradient(circle at 40% 35%,#fff7c9,#e7bd69 68%,#ba7b28);
+  box-shadow:inset 0 -8px 12px rgba(125,72,15,.16);pointer-events:none;transition:opacity .15s}
+#batterBlob.on{opacity:.88}
+#toppingBits{position:absolute;z-index:2;left:34%;top:34%;width:32%;height:32%;opacity:0;pointer-events:none;transform:scale(.4);transition:.3s}
+#toppingBits.on{opacity:1;transform:scale(1)}
+#toppingBits::before{content:'';position:absolute;inset:0;border-radius:50%;background-size:18px 18px,23px 23px,15px 15px}
+#toppingBits.buchu::before{background-image:radial-gradient(ellipse,#4f8e32 0 24%,transparent 28%),radial-gradient(ellipse,#76ad42 0 20%,transparent 25%),radial-gradient(ellipse,#2f6c2e 0 18%,transparent 23%)}
+#toppingBits.kimchi::before{background-image:radial-gradient(ellipse,#c9472d 0 27%,transparent 31%),radial-gradient(ellipse,#ef7041 0 23%,transparent 28%),radial-gradient(ellipse,#a92f25 0 18%,transparent 23%)}
+#toppingBits.haemul::before{background-image:radial-gradient(circle,#ef9c72 0 20%,transparent 24%),radial-gradient(circle,#f4d9a6 0 22%,transparent 27%),radial-gradient(circle,#dc725c 0 16%,transparent 21%)}
+#ingredientTray{display:flex;justify-content:center;gap:8px;margin:0 12px 10px;min-height:0}
+#ingredientTray.hidden{display:none}
+.ingredientBtn{width:30%;max-width:112px;border:3px solid #d8bd8f;border-radius:15px;background:#fdf3df;padding:5px;color:#5b3a1e;
+  font-family:inherit;font-size:16px;cursor:pointer;box-shadow:0 3px 0 #b8946a}
+.ingredientBtn img{display:block;width:42px;height:42px;object-fit:contain;margin:0 auto 2px;border-radius:50%;background:#f0e0c2}
+.ingredientBtn:active{transform:translateY(2px);box-shadow:0 1px 0 #b8946a}
+.ingredientBtn.wrong{animation:ingredientWrong .35s;background:#ffe1d7;border-color:#e05b3a}
+@keyframes ingredientWrong{25%,75%{transform:translateX(-4px)}50%{transform:translateX(4px)}}
+#flipBtn.hidden{display:none}
+#flipBtn.holding{filter:drop-shadow(0 0 14px #ffd54a);transform:scale(.96)}
 
 /* 장사 단계와 마감 압박 */
 #rushCurtain{position:fixed;inset:0;pointer-events:none;z-index:7;opacity:0;box-shadow:inset 0 0 0 0 rgba(220,45,20,0)}
@@ -270,6 +307,13 @@ body{
     <span id="perfectTrack"><span id="trackLabel">황금</span><span class="pip"></span><span class="pip"></span><span class="pip"></span></span>
     <strong id="scoreMulti">x1</strong>
   </div>
+  <div id="processSteps" aria-label="조리 과정">
+    <span class="processStep active" data-step="oil">1 기름</span>
+    <span class="processStep" data-step="batter">2 반죽</span>
+    <span class="processStep" data-step="ingredient">3 재료</span>
+    <span class="processStep" data-step="cook">4 굽기</span>
+    <span class="processStep" data-step="serve">5 서빙</span>
+  </div>
 
   <main id="playArea">
     <div id="gaugeWrap">
@@ -284,9 +328,13 @@ body{
     </div>
     <div id="panWrap">
       <div id="typeBadge"></div>
+      <div id="patienceWrap" role="progressbar" aria-label="손님 인내심" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><div id="patienceBar"></div><span id="patienceText">손님 기다리는 중</span></div>
       <div id="nowHint">지금이야!</div>
       <div id="flameWrap"><img id="flames" src="assets/flames.webp" alt=""></div>
       <img id="panImg" src="assets/pan.webp" alt="후라이팬">
+      <div id="oilSheen" aria-hidden="true"></div>
+      <div id="batterBlob" aria-hidden="true"></div>
+      <div id="toppingBits" aria-hidden="true"></div>
       <div id="jeonStack">
         <img class="jstage" id="jRaw" alt="">
         <img class="jstage" id="jMid" alt="">
@@ -306,7 +354,12 @@ body{
     <div id="bubble">노릇노릇해지면 눌러요!</div>
   </div>
 
-  <button id="flipBtn" type="button">탭!<span class="sub">뒤집기</span></button>
+  <div id="ingredientTray" class="hidden" role="group" aria-label="전 재료 선택">
+    <button class="ingredientBtn" type="button" data-ingredient="buchu"><img src="assets/buchu-gold.webp" alt="">부추</button>
+    <button class="ingredientBtn" type="button" data-ingredient="kimchi"><img src="assets/kimchi-gold.webp" alt="">김치</button>
+    <button class="ingredientBtn" type="button" data-ingredient="haemul"><img src="assets/haemul-gold.webp" alt="">해물</button>
+  </div>
+  <button id="flipBtn" type="button">기름!<span class="sub">팬에 두르기</span></button>
   <button id="pauseBtn" type="button" aria-label="게임 일시정지" title="일시정지"><span class="iconPause" aria-hidden="true"></span></button>
   <button id="sfxBtn" type="button" aria-label="사운드" aria-pressed="true" title="사운드 끄기">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z" fill="#6b4a2f"/><path class="soundWave" d="M15 9c1.7 1.7 1.7 4.3 0 6M18 6c3.3 3.3 3.3 8.7 0 12"/><path class="muteSlash" d="M4 4l16 16"/></svg>
@@ -329,7 +382,7 @@ body{
     </div>
     <p id="bestScore" class="bestLine">최고 점수 0</p>
     <button class="bigBtn yellow" id="startBtn" type="button">시작하기</button>
-    <p class="hintLine">앞면이 노릇하면 뒤집고, 뒷면도 노릇하면 완성!<br>황금 존에 맞추면 완벽 보너스 · 고른 전이 더 자주 나와요</p>
+    <p class="hintLine">기름 → 반죽 꾹 → 주문 재료 선택 → 양면 굽기 → 직접 서빙!<br>빠르고 정확하게 만들수록 팁이 커져요</p>
   </div>
 </div>
 
@@ -465,23 +518,27 @@ return{ensure,isMuted,setMuted,pourSizzle,cookStart,cookVol,cookStop,flip,good,b
 
 /* ═══════════ 전 종류 ═══════════ */
 const TYPES=[
- {id:'buchu',name:'부추전',cookMs:4200,win:[.60,.82],win2:[.55,.80]},
- {id:'kimchi',name:'김치전',cookMs:3800,win:[.64,.78],win2:[.58,.78]},
- {id:'haemul',name:'해물전',cookMs:5200,win:[.70,.83],win2:[.62,.82]},
+ {id:'buchu',name:'부추전',ingredient:'부추',cookMs:4200,patience:15,win:[.60,.82],win2:[.55,.80]},
+ {id:'kimchi',name:'김치전',ingredient:'김치',cookMs:3800,patience:14,win:[.64,.78],win2:[.58,.78]},
+ {id:'haemul',name:'해물전',ingredient:'해물',cookMs:5200,patience:17,win:[.70,.83],win2:[.62,.82]},
 ];
+const BATTER_WIN=[.58,.82];
 
 const $=id=>document.getElementById(id);
 const app=$('app'),vScore=$('vScore'),vTime=$('vTime'),vCombo=$('vCombo'),statTime=$('statTime'),statCombo=$('statCombo');
 const statusStrip=$('statusStrip'),rushBadge=$('rushBadge'),trackLabel=$('trackLabel'),scoreMulti=$('scoreMulti');
-const perfectPips=[...document.querySelectorAll('#perfectTrack .pip')],countdownBurst=$('countdownBurst');
+const perfectPips=[...document.querySelectorAll('#perfectTrack .pip')],processSteps=[...document.querySelectorAll('.processStep')],countdownBurst=$('countdownBurst');
 const bubble=$('bubble'),ajImg=$('ajImg'),typeBadge=$('typeBadge');
 const panImg=$('panImg'),jeonStack=$('jeonStack'),panWrap=$('panWrap'),nowHint=$('nowHint');
+const patienceWrap=$('patienceWrap'),patienceBar=$('patienceBar'),patienceText=$('patienceText');
+const oilSheen=$('oilSheen'),batterBlob=$('batterBlob'),toppingBits=$('toppingBits'),ingredientTray=$('ingredientTray');
+const ingredientBtns=[...document.querySelectorAll('.ingredientBtn')];
 const stages={raw:$('jRaw'),mid:$('jMid'),gold:$('jGold'),burnt:$('jBurnt')};
 const toastEl=$('toast'),scorePop=$('scorePop'),flashEl=$('flash');
 const startOv=$('startOv'),pauseOv=$('pauseOv'),endOv=$('endOv'),bestScoreEl=$('bestScore'),endBestEl=$('endBest');
 const pauseMenu=$('pauseMenu'),pauseConfirm=$('pauseConfirm'),pauseSummary=$('pauseSummary');
 const gaugeLbl=$('gaugeLbl'),flamesEl=$('flames'),flameWrap=$('flameWrap');
-const plateEl=$('plate'),plateCnt=$('plateCnt'),pauseBtn=$('pauseBtn'),sfxBtn=$('sfxBtn');
+const plateEl=$('plate'),plateCnt=$('plateCnt'),flipBtn=$('flipBtn'),pauseBtn=$('pauseBtn'),sfxBtn=$('sfxBtn');
 
 const IMG={happy:'assets/ajumma-happy.webp',worried:'assets/ajumma-worried.webp',surprised:'assets/ajumma-surprised.webp'};
 
@@ -524,7 +581,7 @@ const RUSH_STAGES=[
 ];
 const G={playing:false,paused:false,pauseReason:'',pendingPauseAction:'',score:0,combo:0,best:0,count:0,timeLeft:60,
  jeon:null,selType:TYPES[0],lastTs:0,raf:0,timers:[],lastType:'',typeStreak:0,heatLvl:0,hiddenAt:0,
- stage:-1,lastSecond:60,perfectStreak:0,fever:false,feverLeft:0,highScore:loadBestScore()};
+ stage:-1,lastSecond:60,perfectStreak:0,fever:false,feverLeft:0,batterHolding:false,highScore:loadBestScore()};
 function armTimer(timer){
  timer.startedAt=performance.now();
  timer.id=setTimeout(()=>{
@@ -553,7 +610,32 @@ function updateStatus(){
  trackLabel.textContent=G.fever?`피버 ${Math.max(0,G.feverLeft).toFixed(1)}초`:'황금';
  scoreMulti.textContent='x'+Number(scoreMultiplier().toFixed(1));
 }
-updateBestScore();updateStatus();
+const PROCESS_ORDER=['oil','batter','ingredient','cook','serve'];
+function processForPhase(phase){if(['oil','oiling'].includes(phase))return'oil';if(['batter','batterDone'].includes(phase))return'batter';if(['pour','cook','flipping'].includes(phase))return'cook';if(['serve','serving'].includes(phase))return'serve';return phase;}
+function updateProcess(phase){const active=PROCESS_ORDER.indexOf(processForPhase(phase));processSteps.forEach((step,i)=>{
+ step.classList.toggle('active',i===active);step.classList.toggle('done',i<active);});}
+function setAction(main,sub,{hidden=false,disabled=false}={}){
+ flipBtn.firstChild.nodeValue=main;flipBtn.querySelector('.sub').textContent=sub;
+ flipBtn.classList.toggle('hidden',hidden);flipBtn.disabled=disabled;
+ ingredientTray.classList.toggle('hidden',processForPhase(G.jeon?.phase)!=='ingredient');
+ flipBtn.setAttribute('aria-label',main+' '+sub);
+}
+function configurePhase(phase){if(!G.jeon)return;G.jeon.phase=phase;updateProcess(phase);
+ if(phase==='oil'){drawGauge([.56,.84]);setNeedle(0);gaugeLbl.textContent='먼저 기름을 둘러요';setAction('기름!','팬에 두르기');say('팬부터 준비해볼까요?');}
+ else if(phase==='batter'){drawGauge(BATTER_WIN);setNeedle(G.jeon.batterLevel);gaugeLbl.textContent='누르고 있다가 초록에서 떼기';setAction('누르기','반죽 양 맞추기');say('누르고 있다가 알맞을 때 떼요!');flipBtn.focus({preventScroll:true});}
+ else if(phase==='ingredient'){setNeedle(.7);gaugeLbl.textContent=`${G.jeon.type.ingredient}를 골라 넣어요`;setAction('재료','아래에서 선택',{hidden:true});say(`${G.jeon.type.ingredient}를 넣어주세요!`);ingredientTray.classList.remove('hidden');ingredientBtns[0].focus({preventScroll:true});}
+ else if(phase==='pour'){gaugeLbl.textContent='반죽과 재료가 익는 중';setAction('잠깐!','팬에 올리는 중',{disabled:true});ingredientTray.classList.add('hidden');}
+ else if(phase==='cook'){drawGauge(currentWindow());gaugeLbl.textContent=G.jeon.side===1?'앞면 익는 중':'뒷면 익는 중';setAction('탭!','노릇할 때 뒤집기');flipBtn.focus({preventScroll:true});}
+ else if(phase==='flipping'){setAction('홱!','뒤집는 중',{disabled:true});}
+ else if(phase==='serve'){setNeedle(1);gaugeLbl.textContent='완성! 손님께 내주세요';setAction('서빙!','손님께 내기');say('기다리기 전에 얼른 내주세요!','happy');flipBtn.focus({preventScroll:true});}
+ else if(phase==='serving'){setAction('서빙!','내는 중',{disabled:true});}
+}
+function updatePatience(){const j=G.jeon;if(!j)return;const ratio=Math.max(0,Math.min(1,j.patience/j.maxPatience));
+ patienceBar.style.width=(ratio*100)+'%';patienceWrap.classList.toggle('low',ratio<=.27);
+ patienceWrap.setAttribute('aria-valuenow',Math.round(ratio*100));
+ patienceText.textContent=ratio<=.27?'손님이 화났어요!':ratio<=.55?'조금 지루해해요':'손님 기다리는 중';
+}
+updateBestScore();updateStatus();updateProcess('oil');
 
 /* 이미지 프리로드 (전 교체 시 깜빡임 방지) */
 const PRE=TYPES.flatMap(t=>['raw','mid','gold','burnt'].map(s=>`assets/${t.id}-${s}.webp`))
@@ -580,7 +662,7 @@ if(face){ajImg.src=IMG[face];clearTimeout(faceT);
 
 function toast(txt,cls){toastEl.textContent=txt;toastEl.className='';
 void toastEl.offsetWidth;toastEl.className='show '+(cls||'');}
-function popScore(n){scorePop.textContent='+'+n;scorePop.className='';
+function popScore(n){scorePop.textContent=n>0?'+'+n:String(n);scorePop.className='';
 void scorePop.offsetWidth;scorePop.className='show';}
 function flash(cls){flashEl.className='';void flashEl.offsetWidth;flashEl.className=cls;}
 function burst(n,gold){for(let i=0;i<n;i++){const d=document.createElement('div');
@@ -603,7 +685,7 @@ function registerJudgment(q){
 }
 function updateRushStage(initial=false){const next=stageForTime(G.timeLeft);if(next===G.stage)return;
  G.stage=next;const stage=RUSH_STAGES[next];app.classList.toggle('finalRush',next===3);updateHeat();
- if(G.jeon&&!G.jeon.resolved)drawGauge(currentWindow());
+ if(G.jeon&&!G.jeon.resolved){if(G.jeon.phase==='cook')drawGauge(currentWindow());else if(['batter','batterDone'].includes(G.jeon.phase))drawGauge(BATTER_WIN);}
  updateStatus();
  if(initial)return;
  const messages={busy:['손님이 몰려와요!','조금 더 빠르게 갑니다!'],rush:['주문 폭주!','타이밍 존이 좁아졌어요!'],closing:['마감 10초! 점수 x1.5','마지막까지 몰아쳐요!']};
@@ -633,23 +715,47 @@ function updateHeat(){
 function nextJeon(){
  const type=pickType();
  const cookMs=type.cookMs*(1-Math.min(.18,G.count*.018));
- const j=G.jeon={type,phase:'oil',t0:performance.now(),lastCookTs:0,p:0,warned:false,side:1,cookMs};
- typeBadge.textContent='주문 · '+type.name;typeBadge.classList.add('on');
- for(const s in stages){stages[s].src=`assets/${type.id}-${s}.webp`;
-  stages[s].style.opacity=0;stages[s].style.filter='';}
- jeonStack.className='';nowHint.classList.remove('on');
+ const j=G.jeon={type,phase:'oil',t0:performance.now(),lastCookTs:0,p:0,warned:false,side:1,cookMs,
+  maxPatience:type.patience,patience:type.patience,prepQuality:100,batterLevel:0,batterQuality:'',wrongIngredients:0,resolved:false};
+ typeBadge.textContent='손님 주문 · '+type.name;typeBadge.classList.add('on');
+ for(const s in stages){stages[s].src=`assets/${type.id}-${s}.webp`;stages[s].style.opacity=0;stages[s].style.filter='';}
+ jeonStack.className='';nowHint.classList.remove('on');oilSheen.className='';batterBlob.className='';batterBlob.style.setProperty('--batter-scale','.2');
+ toppingBits.className='';ingredientBtns.forEach(btn=>btn.classList.remove('wrong'));G.batterHolding=false;flipBtn.classList.remove('holding');
  jeonStack.querySelectorAll('.steam,.smoke').forEach(s=>s.classList.remove('on'));
- drawGauge(currentWindow(j));setNeedle(0);gaugeLbl.textContent='앞면 익는 중';
- updateHeat();
- Sfx.cookVol(.06);Sfx.ding();
- say(pick([type.name+' 주문이요~',type.name+' 하나 추가요~','주문 들어왔어요~ '+type.name+'!']));
- later(()=>{if(G.jeon===j&&j.phase==='oil'){j.phase='pour';j.t0=performance.now();
-  Sfx.pourSizzle(.9,.5);jeonStack.classList.add('drop');
-  stages.raw.style.opacity=1;}},650);}
+ updateHeat();updatePatience();configurePhase('oil');Sfx.cookVol(.02);Sfx.ding();
+ say(pick([type.name+' 주문이요!',type.name+' 하나 부탁해요~','손님 주문! '+type.name+'!']));}
+function doOil(){const j=G.jeon;if(!j||j.phase!=='oil')return;j.phase='oiling';updateProcess('oil');
+ setAction('쓱쓱','기름 두르는 중',{disabled:true});oilSheen.classList.add('on');Sfx.pourSizzle(.38,.2);Sfx.vibrate(25);
+ later(()=>{if(G.jeon===j&&!j.resolved)configurePhase('batter');},380);}
+function startBatter(){const j=G.jeon;if(!j||j.phase!=='batter'||G.batterHolding)return;
+ G.batterHolding=true;flipBtn.classList.add('holding');flipBtn.firstChild.nodeValue='떼기!';flipBtn.querySelector('.sub').textContent='초록 구간에서 손 떼기';
+ batterBlob.classList.add('on');}
+function releaseBatter(){const j=G.jeon;if(!j||j.phase!=='batter'||!G.batterHolding)return;
+ G.batterHolding=false;j.phase='batterDone';updateProcess('batter');flipBtn.classList.remove('holding');setAction('좋아요!','반죽 자리 잡는 중',{disabled:true});const p=j.batterLevel,pw=perfectWin(BATTER_WIN);let msg,quality;
+ if(p>=pw[0]&&p<=pw[1]){quality=100;msg='반죽 양 완벽!';Sfx.perfect();}
+ else if(p>=BATTER_WIN[0]&&p<=BATTER_WIN[1]){quality=92;msg='반죽 양 좋아요!';Sfx.good();}
+ else if(p>=.4&&p<=.94){quality=72;msg=p<BATTER_WIN[0]?'반죽이 조금 적어요':'반죽이 조금 많아요';Sfx.flip();}
+ else{quality=52;msg=p<.4?'반죽이 너무 적어요!':'반죽이 넘쳤어요!';Sfx.bad();}
+ j.prepQuality=quality;j.batterQuality=quality===100?'완벽':quality>=90?'좋음':quality>=70?'보통':'아쉬움';
+ batterBlob.style.setProperty('--batter-scale',String(.48+Math.min(1,p)*.62));toast(msg,quality>=90?'good':'bad');
+ later(()=>{if(G.jeon===j&&!j.resolved)configurePhase('ingredient');},280);}
+function chooseIngredient(id,button){const j=G.jeon;if(!j||j.phase!=='ingredient')return;
+ if(id!==j.type.id){j.wrongIngredients++;j.prepQuality=Math.max(35,j.prepQuality-25);j.patience=Math.max(0,j.patience-1.5);updatePatience();
+  button.classList.remove('wrong');void button.offsetWidth;button.classList.add('wrong');toast('주문과 다른 재료! 인내심 감소','bad');say(`${j.type.ingredient}를 넣어야 해요!`,'surprised');Sfx.bad();Sfx.vibrate([45,30,45]);
+  if(j.patience<=0)resolveCustomerLost();return;}
+ toppingBits.className='on '+id;toast(j.type.ingredient+' 듬뿍!','good');Sfx.good();configurePhase('pour');
+ jeonStack.classList.add('drop');stages.raw.style.opacity=1;Sfx.pourSizzle(.7,.45);
+ later(()=>{if(G.jeon!==j||j.resolved)return;oilSheen.className='';batterBlob.className='';toppingBits.className='';
+  j.side=1;j.p=0;j.lastCookTs=performance.now();configurePhase('cook');jeonStack.classList.add('sizzle');Sfx.cookVol(.08);},620);}
+function resolveCustomerLost(){const j=G.jeon;if(!j||j.resolved)return;j.resolved=true;j.phase='done';G.batterHolding=false;
+ const penalty=Math.min(100,G.score);G.score-=penalty;G.combo=0;G.perfectStreak=0;stopFever();updateStatus();vScore.textContent=G.score;vCombo.textContent='0';
+ statCombo.classList.remove('hot');flipBtn.classList.remove('holding');setAction('다음!','새 주문 받는 중',{disabled:true});ingredientTray.classList.add('hidden');
+ toast('손님이 떠났어요'+(penalty?` · -${penalty}점`:''),'bad');if(penalty)popScore(-penalty);say('너무 오래 기다렸어요!','worried');Sfx.bad();Sfx.vibrate([100,50,100]);
+ later(()=>{if(G.playing)nextJeon();},850);}
 
 /* 뒤집기 성공 → 뒷면 굽기로 진행 */
 function resolveFlip(q){
- const j=G.jeon;if(!j||j.resolved||j.phase!=='cook')return;j.phase='flipping';
+ const j=G.jeon;if(!j||j.resolved||j.phase!=='cook')return;configurePhase('flipping');
  nowHint.classList.remove('on');
  const pts=award(q==='perfect'?80:40);
  jeonStack.classList.remove('sizzle','fast');jeonStack.classList.add('flip3d');
@@ -659,33 +765,32 @@ function resolveFlip(q){
   burst(10,true);Sfx.perfect();}
  else{toast('뒤집기!','good');say(pick(BUB.flip),'happy');burst(6,false);}
  popScore(pts);flash('good');Sfx.flip();Sfx.vibrate(40);registerJudgment(q);
- later(()=>{if(G.jeon!==j)return;
+ later(()=>{if(G.jeon!==j||j.resolved)return;
   jeonStack.classList.remove('flip3d');
-  j.side=2;j.phase='cook';j.t0=performance.now();j.lastCookTs=performance.now();j.p=0;j.warned=false;
-  forceStage('gold');stages.gold.style.filter='';
-  drawGauge(currentWindow(j));setNeedle(0);gaugeLbl.textContent='뒷면 익는 중';
-  jeonStack.classList.add('sizzle');
-  say(pick(BUB.side2));},520);}
+  j.side=2;j.p=0;j.warned=false;j.lastCookTs=performance.now();
+  forceStage('gold');stages.gold.style.filter='';configurePhase('cook');
+  jeonStack.classList.add('sizzle');say(pick(BUB.side2));},520);}
 
-/* 완성(뒷면 성공) → 접시로 서빙 */
-function resolveDone(q){
- const j=G.jeon;if(!j||j.resolved)return;j.resolved=true;j.phase='done';
- nowHint.classList.remove('on');
+/* 뒷면 성공 → 직접 서빙 대기 */
+function resolveCooked(q){
+ const j=G.jeon;if(!j||j.resolved||j.phase!=='cook')return;j.cookResult=q;configurePhase('serve');
+ nowHint.classList.remove('on');const pts=award(q==='perfect'?160:100);
+ jeonStack.classList.remove('sizzle','fast');if(q==='perfect')jeonStack.classList.add('flipGood');
+ jeonStack.querySelectorAll('.steam,.smoke').forEach(s=>s.classList.remove('on'));forceStage('gold');stages.gold.style.filter='';
+ if(q==='perfect'){toast(`완벽하게 익었어요! +${pts}`,'good');burst(12,true);Sfx.perfect();}
+ else{toast(`다 익었어요! +${pts}`,'good');burst(6,false);Sfx.good();}
+ popScore(pts);flash('good');Sfx.flip();Sfx.vibrate(45);Sfx.cookVol(.03);registerJudgment(q);
+}
+function serveJeon(){const j=G.jeon;if(!j||j.resolved||j.phase!=='serve')return;j.resolved=true;configurePhase('serving');
  G.combo++;G.best=Math.max(G.best,G.combo);G.count++;updateStatus();
- const pts=award(q==='perfect'?160:100);
- jeonStack.classList.remove('sizzle','fast');jeonStack.classList.add('toPlate');
- jeonStack.querySelectorAll('.steam,.smoke').forEach(s=>s.classList.remove('on'));
- forceStage('gold');stages.gold.style.filter='';
- if(q==='perfect'){toast('완벽한 전!','good');say(pick(BUB.pdone),'happy');
-  burst(14,true);Sfx.perfect();}
- else{toast(pick(['노릇노릇 완성!','잘 익었어요~']),'good');say(pick(BUB.done),'happy');
-  burst(8,false);}
- if(G.combo>=2)statCombo.classList.add('hot');
- popScore(pts);flash('good');Sfx.flip();Sfx.good();Sfx.vibrate(50);Sfx.cookVol(.1);registerJudgment(q);
- plateEl.classList.add('on');plateCnt.textContent='x'+G.count;
- plateEl.classList.remove('bump');void plateEl.offsetWidth;plateEl.classList.add('bump');
- vCombo.textContent=G.combo;
- later(()=>{if(G.playing)nextJeon();},1150);}
+ const patienceRatio=Math.max(0,j.patience/j.maxPatience);const tipBase=Math.round(90*(j.prepQuality/100)*(.45+.55*patienceRatio));
+ const tip=award(tipBase);j.tip=tip;
+ jeonStack.classList.remove('flipGood');jeonStack.classList.add('toPlate');
+ if(G.combo>=2)statCombo.classList.add('hot');plateEl.classList.add('on');plateCnt.textContent='x'+G.count;
+ plateEl.classList.remove('bump');void plateEl.offsetWidth;plateEl.classList.add('bump');vCombo.textContent=G.combo;
+ const quality=j.prepQuality>=95?'정성 만점':j.prepQuality>=75?'맛있게 완성':'조금 아쉬운 모양';
+ toast(`${quality} · 팁 +${tip}`,'good');popScore(tip);say(`반죽 ${j.batterQuality}, 팁도 받았어요!`,'happy');burst(10,j.prepQuality>=95);Sfx.good();Sfx.vibrate(50);
+ later(()=>{if(G.playing)nextJeon();},900);}
 
 /* 실패: 덜 익음 / 탐 */
 function resolveFail(kind){
@@ -719,7 +824,7 @@ function onTap(){
  if(p<w[0]){resolveFail('early');return;}
  if(p<=w[1]){
   const pw=perfectWin(w),q=p>=pw[0]&&p<=pw[1]?'perfect':'good';
-  if(j.side===1)resolveFlip(q);else resolveDone(q);
+  if(j.side===1)resolveFlip(q);else resolveCooked(q);
  }else resolveFail('burnt');}
 
 /* ── 메인 루프 ── */
@@ -739,9 +844,12 @@ function frame(ts){
  if(G.timeLeft<=0){endGame('마감 완료');return;}
  const j=G.jeon;
  if(j&&!j.resolved){
-  const el=ts-j.t0;
-  if(j.phase==='pour'){
-   j.p=0;if(el>=700){j.phase='cook';j.t0=ts;j.lastCookTs=ts;jeonStack.classList.add('sizzle');}
+  j.patience=Math.max(0,j.patience-dt/1000*(1+Math.max(0,G.stage)*.06));updatePatience();
+  if(j.patience<=0){resolveCustomerLost();G.raf=requestAnimationFrame(frame);return;}
+  if(j.phase==='batter'&&G.batterHolding){
+   j.batterLevel=Math.min(1,j.batterLevel+dt/1150);setNeedle(j.batterLevel);
+   batterBlob.classList.add('on');batterBlob.style.setProperty('--batter-scale',String(.2+j.batterLevel*.85));
+   if(j.batterLevel>=1)releaseBatter();
   }else if(j.phase==='cook'){
    const cookDt=j.lastCookTs?Math.min(100,ts-j.lastCookTs):0;j.lastCookTs=ts;
    const stage=RUSH_STAGES[Math.max(0,G.stage)];
@@ -767,20 +875,22 @@ function frame(ts){
 function resetRunUI(){
  vScore.textContent='0';vCombo.textContent='0';vTime.textContent='60';
  statCombo.classList.remove('hot');statTime.querySelector('.value').classList.remove('low');
- plateEl.classList.remove('on');plateCnt.textContent='x0';
+ plateEl.classList.remove('on');plateCnt.textContent='x0';ingredientTray.classList.add('hidden');
+ oilSheen.className='';batterBlob.className='';toppingBits.className='';updateProcess('oil');
  app.classList.remove('finalRush','feverMode');countdownBurst.classList.remove('show');
 }
 function startGame(){
  Sfx.ensure();clearTimers();cancelAnimationFrame(G.raf);
  Object.assign(G,{playing:true,paused:false,pauseReason:'',pendingPauseAction:'',score:0,combo:0,best:0,count:0,timeLeft:60,
-  lastType:'',typeStreak:0,heatLvl:0,stage:-1,lastSecond:60,perfectStreak:0,fever:false,feverLeft:0});
+  lastType:'',typeStreak:0,heatLvl:0,stage:-1,lastSecond:60,perfectStreak:0,fever:false,feverLeft:0,batterHolding:false});
  resetRunUI();updateRushStage(true);updateStatus();
  startOv.classList.add('hidden');pauseOv.classList.add('hidden');endOv.classList.add('hidden');app.inert=false;
  $('flipBtn').disabled=false;Sfx.cookStart();nextJeon();
  $('flipBtn').focus({preventScroll:true});G.lastTs=performance.now();G.raf=requestAnimationFrame(frame);}
 function freezeGame(reason){
  if(!G.playing||G.paused)return false;
- G.paused=true;G.pauseReason=reason;G.hiddenAt=performance.now();
+ const wasHolding=G.batterHolding;G.paused=true;G.pauseReason=reason;G.hiddenAt=performance.now();G.batterHolding=false;flipBtn.classList.remove('holding');
+ if(wasHolding&&G.jeon?.phase==='batter')setAction('누르기','반죽 양 맞추기');
  cancelAnimationFrame(G.raf);pauseTimers();Sfx.cookVol(0);return true;
 }
 function resumeGame(){
@@ -788,7 +898,8 @@ function resumeGame(){
  const shift=performance.now()-G.hiddenAt;if(G.jeon){G.jeon.t0+=shift;G.jeon.lastCookTs=performance.now();}
  G.lastTs=performance.now();G.paused=false;G.pauseReason='';resumeTimers();
  pauseOv.classList.add('hidden');app.inert=false;Sfx.cookVol(.08);
- $('flipBtn').focus({preventScroll:true});G.raf=requestAnimationFrame(frame);
+ if(G.jeon?.phase==='ingredient')ingredientBtns[0].focus({preventScroll:true});else flipBtn.focus({preventScroll:true});
+ G.raf=requestAnimationFrame(frame);
 }
 function openPause(){
  if(!freezeGame('manual'))return;
@@ -832,11 +943,20 @@ function endGame(reason='마감 완료'){
 document.addEventListener('pointerdown',e=>{
  if(e.target.closest('.overlay,#flipBtn,#pauseBtn,#sfxBtn'))return;
  onTap();},{passive:true});
+function handlePrimaryAction(){const phase=G.jeon?.phase;if(!G.playing||G.paused)return;
+ if(phase==='oil')doOil();else if(phase==='cook')onTap();else if(phase==='serve')serveJeon();}
 let flipHandledByPointer=false;
-$('flipBtn').addEventListener('pointerdown',()=>{flipHandledByPointer=true;onTap();});
-$('flipBtn').addEventListener('click',()=>{if(!flipHandledByPointer)onTap();flipHandledByPointer=false;});
-$('flipBtn').addEventListener('pointerup',()=>setTimeout(()=>{flipHandledByPointer=false;},0));
-$('flipBtn').addEventListener('pointercancel',()=>{flipHandledByPointer=false;});
+flipBtn.addEventListener('pointerdown',e=>{e.preventDefault();flipHandledByPointer=true;
+ if(G.jeon?.phase==='batter')startBatter();else handlePrimaryAction();});
+flipBtn.addEventListener('pointerup',()=>{releaseBatter();setTimeout(()=>{flipHandledByPointer=false;},0);});
+flipBtn.addEventListener('pointercancel',()=>{releaseBatter();flipHandledByPointer=false;});
+const isPrimaryKey=e=>e.key==='Enter'||e.key===' '||e.key==='Spacebar'||e.code==='Space';
+flipBtn.addEventListener('keydown',e=>{if(!isPrimaryKey(e)||G.jeon?.phase!=='batter')return;
+ e.preventDefault();if(!e.repeat)startBatter();});
+flipBtn.addEventListener('keyup',e=>{if(!isPrimaryKey(e)||G.jeon?.phase!=='batter')return;
+ e.preventDefault();releaseBatter();});
+flipBtn.addEventListener('click',()=>{if(!flipHandledByPointer)handlePrimaryAction();flipHandledByPointer=false;});
+ingredientBtns.forEach(btn=>btn.addEventListener('click',()=>chooseIngredient(btn.dataset.ingredient,btn)));
 $('startBtn').addEventListener('click',startGame);
 $('retryBtn').addEventListener('click',startGame);
 $('homeBtn').addEventListener('click',goHome);
