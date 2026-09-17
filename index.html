@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>전 뒤집기</title>
 <meta name="description" content="노릇노릇할 때 탭! 60초 안에 전을 최대한 많이 뒤집는 1탭 타이밍 미니게임">
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
@@ -13,16 +13,19 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
+.srOnly{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+button:focus-visible,.typeCard:focus-visible{outline:4px solid #2367c9;outline-offset:3px}
 body{
   background:#e8d5b4 url('assets/bg-table.webp') center/cover no-repeat fixed;
-  font-family:'Jua','Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;
+  font-family:'Jua','Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',system-ui,sans-serif;
   color:var(--brown-d); user-select:none; -webkit-user-select:none;
   touch-action:manipulation; overflow:hidden;
 }
-#app{max-width:480px;height:100dvh;margin:0 auto;display:flex;flex-direction:column;position:relative}
+#app{max-width:480px;height:100dvh;margin:0 auto;display:flex;flex-direction:column;position:relative;
+  padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
 
 /* ── HUD ─────────────────────────────── */
-#hud{display:flex;gap:8px;padding:12px 56px 6px 14px}
+#hud{display:flex;gap:8px;padding:12px 56px 6px}
 .stat{flex:1;background:var(--paper);border:3px solid #c9a875;border-radius:16px;padding:5px 4px 7px;text-align:center;box-shadow:0 4px 0 #b8946a}
 .stat .label{font-size:14px;color:#a08464}
 .stat .value{font-size:30px;color:#5b3a1e;line-height:1.1}
@@ -30,6 +33,26 @@ body{
 @keyframes pulse{50%{transform:scale(1.12)}}
 #statCombo .value{color:var(--orange)}
 #statCombo.hot .value{animation:pulse .4s infinite}
+#statusStrip{display:flex;align-items:center;justify-content:space-between;gap:7px;margin:2px 14px 0;padding:4px 10px;
+  min-height:31px;background:rgba(253,246,233,.92);border:2px solid #c9a875;border-radius:999px;box-shadow:0 2px 0 #b8946a;font-size:13px}
+#rushBadge{color:#6b4a2f;white-space:nowrap}
+#perfectTrack{display:flex;align-items:center;gap:4px;color:#8a6a45;white-space:nowrap}
+.pip{width:10px;height:10px;border:2px solid #d8bd8f;border-radius:50%;background:#f3e6cc}
+.pip.on{background:#ffd54a;border-color:#e8a52a;box-shadow:0 0 6px #ffd54a}
+#scoreMulti{min-width:34px;text-align:right;color:var(--orange);font-size:16px;white-space:nowrap}
+#statusStrip.fever{background:#fff0b8;border-color:#f0a02d;animation:feverGlow .45s ease-in-out infinite alternate}
+#statusStrip.fever #perfectTrack{color:#c55f0e;font-size:15px}
+@keyframes feverGlow{to{box-shadow:0 0 15px #ffd54a,0 2px 0 #c55f0e}}
+
+/* 장사 단계와 마감 압박 */
+#rushCurtain{position:fixed;inset:0;pointer-events:none;z-index:7;opacity:0;box-shadow:inset 0 0 0 0 rgba(220,45,20,0)}
+#app.finalRush #rushCurtain{opacity:1;animation:dangerEdge 1s ease-in-out infinite}
+#app.feverMode #rushCurtain{opacity:1;box-shadow:inset 0 0 42px rgba(255,196,40,.28)}
+@keyframes dangerEdge{50%{box-shadow:inset 0 0 55px 13px rgba(220,45,20,.38)}}
+#countdownBurst{position:fixed;left:50%;top:50%;z-index:9;pointer-events:none;opacity:0;
+  color:#fff4bd;font-size:min(32vw,150px);line-height:1;text-shadow:0 8px 0 #b82e1c,0 0 30px rgba(255,90,30,.75)}
+#countdownBurst.show{animation:countdownBoom .78s ease-out}
+@keyframes countdownBoom{0%{opacity:0;transform:translate(-50%,-50%) scale(1.8)}20%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.7)}}
 
 /* ── 아주머니 + 말풍선 ─────────────────── */
 #ajRow{display:flex;align-items:center;gap:10px;padding:2px 16px;min-height:70px}
@@ -137,19 +160,27 @@ body{
 #plateCnt{position:absolute;right:2%;top:-6px;background:var(--orange);color:#fff;font-size:15px;
   padding:1px 10px;border-radius:999px;box-shadow:0 2px 0 #c55f0e}
 
-/* 사운드 토글 */
-#sfxBtn{position:absolute;top:12px;right:12px;z-index:20;width:42px;height:42px;border-radius:50%;
+/* 상단 조작 버튼 */
+#pauseBtn,#sfxBtn{position:absolute;top:calc(12px + env(safe-area-inset-top));z-index:20;width:42px;height:42px;border-radius:50%;
   border:3px solid #c9a875;background:var(--paper);font-size:18px;cursor:pointer;
   box-shadow:0 3px 0 #b8946a;font-family:inherit;line-height:1}
-#sfxBtn:active{transform:translateY(2px);box-shadow:0 1px 0 #b8946a}
+#pauseBtn{left:12px}#sfxBtn{right:12px}
+#pauseBtn:active,#sfxBtn:active{transform:translateY(2px);box-shadow:0 1px 0 #b8946a}
+.iconPause{display:block;position:relative;width:16px;height:19px;margin:auto}
+.iconPause::before,.iconPause::after{content:'';position:absolute;top:1px;width:5px;height:17px;border-radius:2px;background:#6b4a2f}
+.iconPause::before{left:1px}.iconPause::after{right:1px}
+#sfxBtn svg{display:block;width:24px;height:24px;margin:auto;overflow:visible}
+#sfxBtn .soundWave{fill:none;stroke:#6b4a2f;stroke-width:2.2;stroke-linecap:round}
+#sfxBtn .muteSlash{display:none;stroke:#c94d35;stroke-width:2.8;stroke-linecap:round}
+#sfxBtn.muted .soundWave{display:none}#sfxBtn.muted .muteSlash{display:block}
 
 /* 전 선택 카드 */
 .selRow{display:flex;gap:10px;justify-content:center;margin:10px 0 14px}
 .typeCard{flex:1;max-width:110px;border:3px solid #d8bd8f;border-radius:16px;padding:8px 6px 9px;
-  background:#fdf3df;cursor:pointer;text-align:center;transition:transform .12s,border-color .12s}
+  background:#fdf3df;cursor:pointer;text-align:center;transition:transform .12s,border-color .12s;font-family:inherit;color:inherit}
 .typeCard img{width:100%;aspect-ratio:1;object-fit:contain;border-radius:10px;background:#f0e0c2}
-.typeCard .tn{font-size:17px;color:#5b3a1e;margin-top:4px;line-height:1.2}
-.typeCard .tt{font-size:12px;color:#a08464;line-height:1.25;margin-top:2px;font-family:'Pretendard','Noto Sans KR',sans-serif;font-weight:600;word-break:keep-all}
+.typeCard .tn{display:block;font-size:17px;color:#5b3a1e;margin-top:4px;line-height:1.2}
+.typeCard .tt{display:block;font-size:12px;color:#a08464;line-height:1.25;margin-top:2px;font-family:'Pretendard','Noto Sans KR',sans-serif;font-weight:600;word-break:keep-all}
 .typeCard.sel{border-color:var(--orange);background:#ffeccf;transform:translateY(-4px);box-shadow:0 5px 0 #d8955a}
 .card .ajBig{width:104px;height:104px;border-radius:50%;border:3px solid #c9a875;object-fit:cover;margin-top:-58px;background:var(--paper)}
 #homeBtn{display:block;margin:10px auto 0;background:none;border:none;color:#8a6a45;font-size:16px;font-family:inherit;cursor:pointer;text-decoration:underline}
@@ -171,15 +202,39 @@ body{
 .bigBtn:active{transform:translateY(4px);filter:drop-shadow(0 1px 2px rgba(120,60,10,.3))}
 .bigBtn.yellow{background-image:url('assets/btn-wide-yellow.webp')}
 .bigBtn.green{background-image:url('assets/btn-wide-green.webp');color:#3f5423}
+.pauseCard{max-width:360px}
+.pauseCard h1{font-size:38px;color:#5b3a1e}
+#pauseSummary{font-size:19px;color:#8a6a45;margin:8px 0 14px}
+.pauseMenu{display:grid;gap:5px}
+.menuBtn{width:100%;min-height:58px;border:0;background:transparent url('assets/btn-wide-yellow.webp') center/100% 100% no-repeat;color:#5b3a1e;
+  font-family:inherit;font-size:21px;cursor:pointer;filter:drop-shadow(0 4px 4px rgba(120,60,10,.24))}
+.menuBtn.primary{background-image:url('assets/btn-wide-green.webp');color:#3f5423}
+.menuBtn.danger{background-image:url('assets/btn-wide-orange.webp');color:#6b2c14}
+.menuBtn:active{transform:translateY(3px);filter:drop-shadow(0 1px 2px rgba(120,60,10,.22))}
+#pauseConfirm{padding:12px 0 2px}
+#pauseConfirm.hidden,#pauseMenu.hidden{display:none}
+#pauseConfirmText{font-size:22px;line-height:1.35;margin-bottom:14px}
+.confirmRow{display:flex;gap:10px}
+.confirmRow .menuBtn{flex:1}
+#endReason{display:inline-block;background:#f3e6cc;color:#8a6a45;border-radius:999px;padding:3px 13px;font-size:14px;margin-bottom:4px}
 #endScore{font-size:58px;color:var(--orange);line-height:1.1}
 #endCount{font-size:20px;color:#5b3a1e}
 #endCombo{font-size:17px;color:#8a6a45;margin-top:2px}
+.bestLine{font-size:17px;color:#8a6a45;margin:4px 0 8px}
+.bestLine.record{color:var(--orange);animation:bubblePop .35s ease-out}
 #stars{font-size:40px;letter-spacing:6px;margin:4px 0;color:#e8a52a}
 #stars .off{opacity:.25}
 .hintLine{font-size:15px;color:#a08464;margin-top:10px;line-height:1.6;font-family:'Pretendard','Noto Sans KR',sans-serif;font-weight:600}
 
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  #flames{animation:none}
+}
+
 @media (max-height: 720px){
-  #hud{padding:8px 12px 4px}
+  #hud{padding:8px 56px 4px}
+  #pauseBtn,#sfxBtn{top:calc(8px + env(safe-area-inset-top));width:38px;height:38px}
+  #statusStrip{min-height:27px;margin-top:0;padding:2px 9px;font-size:12px}
   .stat{padding:3px 2px 5px;border-radius:12px}
   .stat .value{font-size:24px}
   .stat .label{font-size:12px}
@@ -197,17 +252,26 @@ body{
   #endScore{font-size:44px}
   #stars{font-size:32px}
 }
+@media (max-height: 640px){
+  #startOv .ajBig{display:none}
+  #startOv .hintLine{font-size:13px;line-height:1.35;margin-top:5px}
+}
 </style>
 </head>
 <body>
-<div id="app">
-  <header id="hud">
-    <div class="stat"><div class="label">점수</div><div class="value" id="vScore">0</div></div>
-    <div class="stat" id="statTime"><div class="label">시간</div><div class="value" id="vTime">60</div></div>
-    <div class="stat" id="statCombo"><div class="label">콤보</div><div class="value" id="vCombo">0</div></div>
+<div id="app" inert>
+  <header id="hud" aria-label="게임 현황">
+    <div class="stat"><div class="label">점수</div><output class="value" id="vScore" aria-label="현재 점수">0</output></div>
+    <div class="stat" id="statTime"><div class="label">시간</div><output class="value" id="vTime" aria-label="남은 시간(초)">60</output></div>
+    <div class="stat" id="statCombo"><div class="label">콤보</div><output class="value" id="vCombo" aria-label="현재 콤보">0</output></div>
   </header>
+  <div id="statusStrip" aria-live="polite">
+    <span id="rushBadge">준비 영업</span>
+    <span id="perfectTrack"><span id="trackLabel">황금</span><span class="pip"></span><span class="pip"></span><span class="pip"></span></span>
+    <strong id="scoreMulti">x1</strong>
+  </div>
 
-  <div id="playArea">
+  <main id="playArea">
     <div id="gaugeWrap">
       <svg id="gauge" viewBox="0 0 200 136" aria-hidden="true">
         <path id="arcRaw"   fill="none" stroke="#d9c9a8" stroke-width="15" stroke-linecap="round"/>
@@ -233,9 +297,9 @@ body{
       </div>
       <div id="plate"><img src="assets/jeon-stack.webp" alt="완성된 전"><span id="plateCnt">x0</span></div>
     </div>
-    <div id="toast"></div>
-    <div id="scorePop"></div>
-  </div>
+    <div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+    <div id="scorePop" aria-hidden="true"></div>
+  </main>
 
   <div id="ajRow">
     <img id="ajImg" src="assets/ajumma-happy.webp" alt="전집 아주머니">
@@ -243,33 +307,62 @@ body{
   </div>
 
   <button id="flipBtn" type="button">탭!<span class="sub">뒤집기</span></button>
-  <button id="sfxBtn" type="button" aria-label="사운드 켜기/끄기">🔊</button>
+  <button id="pauseBtn" type="button" aria-label="게임 일시정지" title="일시정지"><span class="iconPause" aria-hidden="true"></span></button>
+  <button id="sfxBtn" type="button" aria-label="사운드" aria-pressed="true" title="사운드 끄기">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z" fill="#6b4a2f"/><path class="soundWave" d="M15 9c1.7 1.7 1.7 4.3 0 6M18 6c3.3 3.3 3.3 8.7 0 12"/><path class="muteSlash" d="M4 4l16 16"/></svg>
+  </button>
+  <div id="rushCurtain" aria-hidden="true"></div>
+  <div id="countdownBurst" aria-hidden="true"></div>
 </div>
 <div id="flash"></div>
 
-<div class="overlay" id="startOv">
+<div class="overlay" id="startOv" role="dialog" aria-modal="true" aria-labelledby="startTitle">
   <div class="card">
+    <h1 id="startTitle" class="srOnly">전 뒤집기</h1>
     <img class="ajBig" src="assets/ajumma-happy.webp" alt="전집 아주머니">
-    <img class="titleImg" src="assets/title.webp" alt="전 뒤집기">
+    <img class="titleImg" src="assets/title.webp" alt="" aria-hidden="true">
     <p class="sub">대표 메뉴를 골라주세요!<br>주문은 랜덤으로 들어와요</p>
-    <div class="selRow" id="selRow">
-      <div class="typeCard sel" data-t="buchu"><img src="assets/buchu-gold.webp" alt=""><div class="tn">부추전</div><div class="tt">보통 속도<br>넉넉한 타이밍</div></div>
-      <div class="typeCard" data-t="kimchi"><img src="assets/kimchi-gold.webp" alt=""><div class="tn">김치전</div><div class="tt">색이 진해<br>살짝 헷갈림</div></div>
-      <div class="typeCard" data-t="haemul"><img src="assets/haemul-gold.webp" alt=""><div class="tn">해물전</div><div class="tt">천천히 익고<br>타이밍 짧음</div></div>
+    <div class="selRow" id="selRow" role="group" aria-label="대표 메뉴 선택">
+      <button class="typeCard sel" type="button" data-t="buchu" aria-pressed="true"><img src="assets/buchu-gold.webp" alt=""><span class="tn">부추전</span><span class="tt">보통 속도<br>넉넉한 타이밍</span></button>
+      <button class="typeCard" type="button" data-t="kimchi" aria-pressed="false"><img src="assets/kimchi-gold.webp" alt=""><span class="tn">김치전</span><span class="tt">색이 진해<br>살짝 헷갈림</span></button>
+      <button class="typeCard" type="button" data-t="haemul" aria-pressed="false"><img src="assets/haemul-gold.webp" alt=""><span class="tn">해물전</span><span class="tt">천천히 익고<br>타이밍 짧음</span></button>
     </div>
+    <p id="bestScore" class="bestLine">최고 점수 0</p>
     <button class="bigBtn yellow" id="startBtn" type="button">시작하기</button>
     <p class="hintLine">앞면이 노릇하면 뒤집고, 뒷면도 노릇하면 완성!<br>황금 존에 맞추면 완벽 보너스 · 고른 전이 더 자주 나와요</p>
   </div>
 </div>
 
-<div class="overlay hidden" id="endOv">
+<div class="overlay hidden" id="pauseOv" role="dialog" aria-modal="true" aria-labelledby="pauseTitle">
+  <div class="card pauseCard">
+    <h1 id="pauseTitle">영업 잠시 멈춤</h1>
+    <p id="pauseSummary">현재 점수 0 · 완성 0장</p>
+    <div class="pauseMenu" id="pauseMenu">
+      <button class="menuBtn primary" id="resumeBtn" type="button">계속하기</button>
+      <button class="menuBtn" id="finishBtn" type="button">현재 점수로 종료</button>
+      <button class="menuBtn danger" id="restartBtn" type="button">처음부터 다시 시작</button>
+      <button class="menuBtn" id="pauseHomeBtn" type="button">대표 메뉴 화면으로</button>
+    </div>
+    <div id="pauseConfirm" class="hidden">
+      <p id="pauseConfirmText"></p>
+      <div class="confirmRow">
+        <button class="menuBtn danger" id="confirmYesBtn" type="button">예, 실행할게요</button>
+        <button class="menuBtn" id="confirmNoBtn" type="button">아니요</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="endOv" role="dialog" aria-modal="true" aria-labelledby="endTitle">
   <div class="card">
+    <div id="endReason">영업 종료</div>
     <h1 id="endTitle" style="font-size:38px">오늘 전 <span id="endJeon" style="color:var(--orange)">0</span>장!</h1>
-    <div id="stars"></div>
+    <div id="stars" role="img" aria-label="별 0개 / 3개"></div>
     <img class="stackImg" id="endStack" src="assets/jeon-stack.webp" alt="">
     <div id="endScore">0</div>
     <div id="endCount">점수</div>
     <div id="endCombo"></div>
+    <div id="endBest" class="bestLine"></div>
     <div id="endMsg" class="hintLine"></div>
     <button class="bigBtn green" id="retryBtn" type="button">다시 하기</button>
     <button id="homeBtn" type="button">처음으로</button>
@@ -357,8 +450,18 @@ const g=ctx.createGain();g.gain.setValueAtTime(.16,t);g.gain.exponentialRampToVa
 [1568,2093].forEach(f=>{const o=ctx.createOscillator();o.type='sine';o.frequency.value=f;
 o.connect(g);o.start(t);o.stop(t+.42);});
 g.connect(master);}
+// 마감 카운트다운
+function tick(urgent=false){if(!ctx)return;const t=ctx.currentTime;
+const o=ctx.createOscillator();o.type=urgent?'square':'sine';o.frequency.value=urgent?980:720;
+const g=ctx.createGain();g.gain.setValueAtTime(.18,t);g.gain.exponentialRampToValueAtTime(.001,t+.11);
+o.connect(g);g.connect(master);o.start(t);o.stop(t+.12);}
+// 피버 시작 팡파르
+function fever(){if(!ctx)return;const t=ctx.currentTime;[523.3,659.3,784,1046.5].forEach((f,i)=>{
+const o=ctx.createOscillator();o.type='triangle';o.frequency.value=f;const g=ctx.createGain();const st=t+i*.07;
+g.gain.setValueAtTime(.001,st);g.gain.exponentialRampToValueAtTime(.22,st+.015);g.gain.exponentialRampToValueAtTime(.001,st+.25);
+o.connect(g);g.connect(master);o.start(st);o.stop(st+.28);});}
 function vibrate(p){try{navigator.vibrate&&navigator.vibrate(p);}catch(e){}}
-return{ensure,isMuted,setMuted,pourSizzle,cookStart,cookVol,cookStop,flip,good,bad,perfect,ding,vibrate};})();
+return{ensure,isMuted,setMuted,pourSizzle,cookStart,cookVol,cookStop,flip,good,bad,perfect,ding,tick,fever,vibrate};})();
 
 /* ═══════════ 전 종류 ═══════════ */
 const TYPES=[
@@ -368,14 +471,17 @@ const TYPES=[
 ];
 
 const $=id=>document.getElementById(id);
-const vScore=$('vScore'),vTime=$('vTime'),vCombo=$('vCombo'),statTime=$('statTime'),statCombo=$('statCombo');
+const app=$('app'),vScore=$('vScore'),vTime=$('vTime'),vCombo=$('vCombo'),statTime=$('statTime'),statCombo=$('statCombo');
+const statusStrip=$('statusStrip'),rushBadge=$('rushBadge'),trackLabel=$('trackLabel'),scoreMulti=$('scoreMulti');
+const perfectPips=[...document.querySelectorAll('#perfectTrack .pip')],countdownBurst=$('countdownBurst');
 const bubble=$('bubble'),ajImg=$('ajImg'),typeBadge=$('typeBadge');
 const panImg=$('panImg'),jeonStack=$('jeonStack'),panWrap=$('panWrap'),nowHint=$('nowHint');
 const stages={raw:$('jRaw'),mid:$('jMid'),gold:$('jGold'),burnt:$('jBurnt')};
 const toastEl=$('toast'),scorePop=$('scorePop'),flashEl=$('flash');
-const startOv=$('startOv'),endOv=$('endOv');
+const startOv=$('startOv'),pauseOv=$('pauseOv'),endOv=$('endOv'),bestScoreEl=$('bestScore'),endBestEl=$('endBest');
+const pauseMenu=$('pauseMenu'),pauseConfirm=$('pauseConfirm'),pauseSummary=$('pauseSummary');
 const gaugeLbl=$('gaugeLbl'),flamesEl=$('flames'),flameWrap=$('flameWrap');
-const plateEl=$('plate'),plateCnt=$('plateCnt'),sfxBtn=$('sfxBtn');
+const plateEl=$('plate'),plateCnt=$('plateCnt'),pauseBtn=$('pauseBtn'),sfxBtn=$('sfxBtn');
 
 const IMG={happy:'assets/ajumma-happy.webp',worried:'assets/ajumma-worried.webp',surprised:'assets/ajumma-surprised.webp'};
 
@@ -407,11 +513,47 @@ function showStages(p,w0){
  stages.burnt.style.opacity=ss(.84,.97,p);}
 function forceStage(name){for(const k in stages)stages[k].style.opacity=k===name?1:0;}
 
-/* ═══════════ 게임 상태 ═══════════ */
-const G={playing:false,paused:false,score:0,combo:0,best:0,count:0,timeLeft:60,
- jeon:null,selType:TYPES[0],lastTs:0,raf:0,timers:[],lastType:'',typeStreak:0,heatLvl:0,hiddenAt:0};
-const later=(fn,ms)=>{const id=setTimeout(fn,ms);G.timers.push(id);return id;};
-const clearTimers=()=>{G.timers.forEach(clearTimeout);G.timers.length=0;};
+/* ═══════════ 게임 상태 · 장사 단계 ═══════════ */
+function loadBestScore(){try{const score=Number(localStorage.getItem('jf_best'));return Number.isFinite(score)?Math.max(0,Math.floor(score)):0;}catch(e){return 0;}}
+function saveBestScore(score){try{localStorage.setItem('jf_best',String(score));}catch(e){}}
+const RUSH_STAGES=[
+ {id:'prep',label:'준비 영업',speed:1,window:1,score:1},
+ {id:'busy',label:'손님 증가',speed:.88,window:.94,score:1},
+ {id:'rush',label:'주문 폭주',speed:.78,window:.86,score:1},
+ {id:'closing',label:'마감 러시',speed:.74,window:.82,score:1.5},
+];
+const G={playing:false,paused:false,pauseReason:'',pendingPauseAction:'',score:0,combo:0,best:0,count:0,timeLeft:60,
+ jeon:null,selType:TYPES[0],lastTs:0,raf:0,timers:[],lastType:'',typeStreak:0,heatLvl:0,hiddenAt:0,
+ stage:-1,lastSecond:60,perfectStreak:0,fever:false,feverLeft:0,highScore:loadBestScore()};
+function armTimer(timer){
+ timer.startedAt=performance.now();
+ timer.id=setTimeout(()=>{
+  timer.id=null;
+  const index=G.timers.indexOf(timer);if(index>=0)G.timers.splice(index,1);
+  timer.fn();
+ },timer.remaining);
+}
+const later=(fn,ms)=>{const timer={fn,remaining:ms,startedAt:0,id:null};G.timers.push(timer);armTimer(timer);return timer;};
+const clearTimers=()=>{G.timers.forEach(timer=>{if(timer.id!==null)clearTimeout(timer.id);});G.timers.length=0;};
+const pauseTimers=()=>{const now=performance.now();G.timers.forEach(timer=>{
+ if(timer.id===null)return;clearTimeout(timer.id);timer.id=null;
+ timer.remaining=Math.max(0,timer.remaining-(now-timer.startedAt));});};
+const resumeTimers=()=>{G.timers.forEach(timer=>{if(timer.id===null)armTimer(timer);});};
+function updateBestScore(){bestScoreEl.textContent='최고 점수 '+G.highScore.toLocaleString('ko-KR');}
+function stageForTime(time){return time<=10?3:time<=20?2:time<=40?1:0;}
+function scaledWindow(win){const scale=RUSH_STAGES[Math.max(0,G.stage)].window;
+ const mid=(win[0]+win[1])/2,half=(win[1]-win[0])*scale/2;return[mid-half,mid+half];}
+function currentWindow(j=G.jeon){if(!j)return TYPES[0].win;return scaledWindow(j.side===1?j.type.win:j.type.win2);}
+function comboMultiplier(){return G.combo>=6?2:G.combo>=4?1.5:G.combo>=2?1.2:1;}
+function scoreMultiplier(){return comboMultiplier()*RUSH_STAGES[Math.max(0,G.stage)].score*(G.fever?2:1);}
+function updateStatus(){
+ const stage=RUSH_STAGES[Math.max(0,G.stage)];rushBadge.textContent=stage.label;
+ perfectPips.forEach((pip,i)=>pip.classList.toggle('on',i<G.perfectStreak));
+ statusStrip.classList.toggle('fever',G.fever);app.classList.toggle('feverMode',G.fever);
+ trackLabel.textContent=G.fever?`피버 ${Math.max(0,G.feverLeft).toFixed(1)}초`:'황금';
+ scoreMulti.textContent='x'+Number(scoreMultiplier().toFixed(1));
+}
+updateBestScore();updateStatus();
 
 /* 이미지 프리로드 (전 교체 시 깜빡임 방지) */
 const PRE=TYPES.flatMap(t=>['raw','mid','gold','burnt'].map(s=>`assets/${t.id}-${s}.webp`))
@@ -447,6 +589,30 @@ d.style.setProperty('--dx',Math.cos(a)*r+'px');
 d.style.setProperty('--dy',(Math.sin(a)*r-50)+'px');
 panWrap.appendChild(d);setTimeout(()=>d.remove(),800);}}
 
+function showCountdown(n){countdownBurst.textContent=n;countdownBurst.classList.remove('show');void countdownBurst.offsetWidth;
+ countdownBurst.classList.add('show');}
+function stopFever(){if(!G.fever)return;G.fever=false;G.feverLeft=0;G.perfectStreak=0;
+ app.classList.remove('feverMode');statusStrip.classList.remove('fever');updateHeat();updateStatus();}
+function startFever(){G.fever=true;G.feverLeft=5;G.perfectStreak=3;updateHeat();updateStatus();
+ toast('🔥 피버 타임 5초! x2','good');say('지금 몰아쳐요! 점수 두 배!','happy');burst(22,true);Sfx.fever();Sfx.vibrate([50,35,80]);}
+function registerJudgment(q){
+ if(G.fever)return;
+ if(q==='perfect'){G.perfectStreak=Math.min(3,G.perfectStreak+1);if(G.perfectStreak>=3)startFever();}
+ else G.perfectStreak=0;
+ updateStatus();
+}
+function updateRushStage(initial=false){const next=stageForTime(G.timeLeft);if(next===G.stage)return;
+ G.stage=next;const stage=RUSH_STAGES[next];app.classList.toggle('finalRush',next===3);updateHeat();
+ if(G.jeon&&!G.jeon.resolved)drawGauge(currentWindow());
+ updateStatus();
+ if(initial)return;
+ const messages={busy:['손님이 몰려와요!','조금 더 빠르게 갑니다!'],rush:['주문 폭주!','타이밍 존이 좁아졌어요!'],closing:['마감 10초! 점수 x1.5','마지막까지 몰아쳐요!']};
+ const [title,line]=messages[stage.id];toast(title,next===3?'bad':'good');say(line,next===3?'surprised':'happy');Sfx.ding();Sfx.vibrate(next===3?[60,35,60]:35);
+}
+function applyTimePenalty(kind){const penalty=kind==='early'?1:3;G.timeLeft=Math.max(0,G.timeLeft-penalty);
+ vTime.textContent=Math.max(0,Math.ceil(G.timeLeft));updateRushStage();return penalty;}
+function award(base){const points=Math.round(base*scoreMultiplier());G.score+=points;vScore.textContent=G.score;return points;}
+
 /* 주문: 대표 메뉴 45% + 나머지 랜덤, 같은 전 3연속 방지 */
 function pickType(){
  let t;
@@ -457,23 +623,23 @@ function pickType(){
 
 /* 불 세기: 완성할수록 빨리 익고 불꽃도 커짐 */
 function updateHeat(){
- const h=Math.min(6,G.count*.5);
- flameWrap.style.transform=`scale(${1+h*.05})`;
- flamesEl.style.animationDuration=(.5/(1+h*.18))+'s';
+ const h=Math.min(7,G.count*.35+Math.max(0,G.stage)*1.15+(G.fever?1.6:0));
+ flameWrap.style.transform=`scale(${1+h*.045})`;
+ flamesEl.style.animationDuration=(.5/(1+h*.16))+'s';
  const lvl=Math.floor(G.count/4);
- if(lvl>G.heatLvl){G.heatLvl=lvl;toast('불이 세졌어요!','bad');}}
+ if(lvl>G.heatLvl){G.heatLvl=lvl;toast('불이 더 세졌어요!','bad');}}
 
 /* ── 한 장 사이클 ── */
 function nextJeon(){
  const type=pickType();
- const cookMs=type.cookMs*(1-Math.min(.35,G.count*.03));
- const j=G.jeon={type,phase:'oil',t0:performance.now(),p:0,warned:false,side:1,cookMs};
+ const cookMs=type.cookMs*(1-Math.min(.18,G.count*.018));
+ const j=G.jeon={type,phase:'oil',t0:performance.now(),lastCookTs:0,p:0,warned:false,side:1,cookMs};
  typeBadge.textContent='주문 · '+type.name;typeBadge.classList.add('on');
  for(const s in stages){stages[s].src=`assets/${type.id}-${s}.webp`;
   stages[s].style.opacity=0;stages[s].style.filter='';}
  jeonStack.className='';nowHint.classList.remove('on');
  jeonStack.querySelectorAll('.steam,.smoke').forEach(s=>s.classList.remove('on'));
- drawGauge(type.win);setNeedle(0);gaugeLbl.textContent='앞면 익는 중';
+ drawGauge(currentWindow(j));setNeedle(0);gaugeLbl.textContent='앞면 익는 중';
  updateHeat();
  Sfx.cookVol(.06);Sfx.ding();
  say(pick([type.name+' 주문이요~',type.name+' 하나 추가요~','주문 들어왔어요~ '+type.name+'!']));
@@ -485,20 +651,19 @@ function nextJeon(){
 function resolveFlip(q){
  const j=G.jeon;if(!j||j.resolved||j.phase!=='cook')return;j.phase='flipping';
  nowHint.classList.remove('on');
- const pts=q==='perfect'?80:40;G.score+=pts;
+ const pts=award(q==='perfect'?80:40);
  jeonStack.classList.remove('sizzle','fast');jeonStack.classList.add('flip3d');
  jeonStack.querySelectorAll('.steam,.smoke').forEach(s=>s.classList.remove('on'));
  panImg.classList.add('shake');later(()=>panImg.classList.remove('shake'),450);
  if(q==='perfect'){toast('찰진 뒤집기!','good');say(pick(BUB.pflip),'happy');
   burst(10,true);Sfx.perfect();}
  else{toast('뒤집기!','good');say(pick(BUB.flip),'happy');burst(6,false);}
- popScore(pts);flash('good');Sfx.flip();Sfx.vibrate(40);
- vScore.textContent=G.score;
+ popScore(pts);flash('good');Sfx.flip();Sfx.vibrate(40);registerJudgment(q);
  later(()=>{if(G.jeon!==j)return;
   jeonStack.classList.remove('flip3d');
-  j.side=2;j.phase='cook';j.t0=performance.now();j.p=0;j.warned=false;
+  j.side=2;j.phase='cook';j.t0=performance.now();j.lastCookTs=performance.now();j.p=0;j.warned=false;
   forceStage('gold');stages.gold.style.filter='';
-  drawGauge(j.type.win2);setNeedle(0);gaugeLbl.textContent='뒷면 익는 중';
+  drawGauge(currentWindow(j));setNeedle(0);gaugeLbl.textContent='뒷면 익는 중';
   jeonStack.classList.add('sizzle');
   say(pick(BUB.side2));},520);}
 
@@ -506,8 +671,8 @@ function resolveFlip(q){
 function resolveDone(q){
  const j=G.jeon;if(!j||j.resolved)return;j.resolved=true;j.phase='done';
  nowHint.classList.remove('on');
- G.combo++;G.best=Math.max(G.best,G.combo);G.count++;
- const pts=(q==='perfect'?160:100)+(G.combo-1)*(q==='perfect'?30:20);G.score+=pts;
+ G.combo++;G.best=Math.max(G.best,G.combo);G.count++;updateStatus();
+ const pts=award(q==='perfect'?160:100);
  jeonStack.classList.remove('sizzle','fast');jeonStack.classList.add('toPlate');
  jeonStack.querySelectorAll('.steam,.smoke').forEach(s=>s.classList.remove('on'));
  forceStage('gold');stages.gold.style.filter='';
@@ -516,27 +681,28 @@ function resolveDone(q){
  else{toast(pick(['노릇노릇 완성!','잘 익었어요~']),'good');say(pick(BUB.done),'happy');
   burst(8,false);}
  if(G.combo>=2)statCombo.classList.add('hot');
- popScore(pts);flash('good');Sfx.flip();Sfx.good();Sfx.vibrate(50);Sfx.cookVol(.1);
+ popScore(pts);flash('good');Sfx.flip();Sfx.good();Sfx.vibrate(50);Sfx.cookVol(.1);registerJudgment(q);
  plateEl.classList.add('on');plateCnt.textContent='x'+G.count;
  plateEl.classList.remove('bump');void plateEl.offsetWidth;plateEl.classList.add('bump');
- vScore.textContent=G.score;vCombo.textContent=G.combo;
+ vCombo.textContent=G.combo;
  later(()=>{if(G.playing)nextJeon();},1150);}
 
 /* 실패: 덜 익음 / 탐 */
 function resolveFail(kind){
  const j=G.jeon;if(!j||j.resolved)return;j.resolved=true;j.phase='done';
  nowHint.classList.remove('on');
- G.combo=0;statCombo.classList.remove('hot');
+ G.combo=0;G.perfectStreak=0;stopFever();updateStatus();statCombo.classList.remove('hot');
+ const penalty=applyTimePenalty(kind);
  panImg.classList.add('shake');later(()=>panImg.classList.remove('shake'),450);
  if(kind==='early'){
   jeonStack.classList.add('flipBad');
   if(j.side===1)forceStage('mid');else stages.gold.style.filter='brightness(.85)';
-  toast(j.side===1?'덜 익었는데 뒤집었어요':'뒷면이 덜 익었어요','bad');
-  say(pick(BUB.early),'surprised');
+  toast((j.side===1?'덜 익었어요':'뒷면이 덜 익었어요')+` · -${penalty}초`,'bad');
+  say('서두르면 시간이 더 줄어요!','surprised');
   flash('bad');Sfx.flip();Sfx.bad();Sfx.vibrate([60,40,60]);Sfx.cookVol(.03);
  }else{
   jeonStack.classList.add('burnShake');forceStage('burnt');
-  toast('아이고 탔어요 ㅠㅠ','bad');say(pick(BUB.burnt),'worried');
+  toast(`타버렸어요 · -${penalty}초`,'bad');say('아이고, 3초나 손해예요!','worried');
   flash('bad');Sfx.bad();Sfx.vibrate([120,60,120]);Sfx.cookVol(.02);
  }
  vCombo.textContent=G.combo;
@@ -546,7 +712,7 @@ function resolveFail(kind){
 function onTap(){
  if(!G.playing||G.paused)return;
  const j=G.jeon;if(!j||j.resolved||j.phase!=='cook')return;
- const p=j.p,w=j.side===1?j.type.win:j.type.win2;
+ const p=j.p,w=currentWindow(j);
  if(p<w[0]*.7){ // 너무 이름 → 경고만
   if(!j.warned){j.warned=true;say(pick(BUB.wait),'surprised');toast('아직이에요~','bad');}
   return;}
@@ -558,21 +724,30 @@ function onTap(){
 
 /* ── 메인 루프 ── */
 function frame(ts){
- if(!G.playing)return;
- const dt=ts-G.lastTs;G.lastTs=ts;
+ if(!G.playing||G.paused)return;
+ const dt=Math.min(100,ts-G.lastTs);G.lastTs=ts;
  G.timeLeft-=dt/1000;
+ if(G.fever){G.feverLeft=Math.max(0,G.feverLeft-dt/1000);if(G.feverLeft<=0){stopFever();toast('피버 종료!','');}}
  const tl=Math.max(0,Math.ceil(G.timeLeft));
  vTime.textContent=tl;
  statTime.querySelector('.value').classList.toggle('low',tl<=10&&tl>0);
- if(G.timeLeft<=0){endGame();return;}
+ updateRushStage();
+ if(tl!==G.lastSecond){G.lastSecond=tl;
+  if(tl<=10&&tl>0){Sfx.tick(tl<=3);if(tl<=3){showCountdown(tl);Sfx.vibrate(25);}}
+ }
+ updateStatus();
+ if(G.timeLeft<=0){endGame('마감 완료');return;}
  const j=G.jeon;
  if(j&&!j.resolved){
   const el=ts-j.t0;
   if(j.phase==='pour'){
-   j.p=0;if(el>=700){j.phase='cook';j.t0=ts;jeonStack.classList.add('sizzle');}
+   j.p=0;if(el>=700){j.phase='cook';j.t0=ts;j.lastCookTs=ts;jeonStack.classList.add('sizzle');}
   }else if(j.phase==='cook'){
-   j.p=el/(j.side===1?j.cookMs:j.cookMs*.55);
-   const p=j.p,w=j.side===1?j.type.win:j.type.win2;
+   const cookDt=j.lastCookTs?Math.min(100,ts-j.lastCookTs):0;j.lastCookTs=ts;
+   const stage=RUSH_STAGES[Math.max(0,G.stage)];
+   const duration=j.cookMs*(j.side===1?1:.55)*stage.speed*(G.fever?.85:1);
+   j.p+=cookDt/duration;
+   const p=j.p,w=currentWindow(j);
    if(j.side===1)showStages(p,w[0]);
    else stages.gold.style.filter=`brightness(${1-Math.min(.3,Math.max(0,p-.55)*.6)})`;
    setNeedle(p);
@@ -588,56 +763,110 @@ function frame(ts){
  }
  G.raf=requestAnimationFrame(frame);}
 
-/* ── 게임 시작/끝 ── */
-function startGame(){
- Sfx.ensure();
- clearTimers();
- G.playing=true;G.paused=false;G.score=0;G.combo=0;G.best=0;G.count=0;G.timeLeft=60;
- G.lastType='';G.typeStreak=0;G.heatLvl=0;
+/* ── 게임 시작·일시정지·끝 ── */
+function resetRunUI(){
  vScore.textContent='0';vCombo.textContent='0';vTime.textContent='60';
- statCombo.classList.remove('hot');plateEl.classList.remove('on');
- startOv.classList.add('hidden');endOv.classList.add('hidden');
- $('flipBtn').disabled=false;
- Sfx.cookStart();
- nextJeon();
- G.lastTs=performance.now();G.raf=requestAnimationFrame(frame);}
-function endGame(){
- G.playing=false;G.paused=false;cancelAnimationFrame(G.raf);clearTimers();Sfx.cookStop();
- nowHint.classList.remove('on');typeBadge.classList.remove('on');
- $('endJeon').textContent=G.count;
- $('endScore').textContent=G.score;
+ statCombo.classList.remove('hot');statTime.querySelector('.value').classList.remove('low');
+ plateEl.classList.remove('on');plateCnt.textContent='x0';
+ app.classList.remove('finalRush','feverMode');countdownBurst.classList.remove('show');
+}
+function startGame(){
+ Sfx.ensure();clearTimers();cancelAnimationFrame(G.raf);
+ Object.assign(G,{playing:true,paused:false,pauseReason:'',pendingPauseAction:'',score:0,combo:0,best:0,count:0,timeLeft:60,
+  lastType:'',typeStreak:0,heatLvl:0,stage:-1,lastSecond:60,perfectStreak:0,fever:false,feverLeft:0});
+ resetRunUI();updateRushStage(true);updateStatus();
+ startOv.classList.add('hidden');pauseOv.classList.add('hidden');endOv.classList.add('hidden');app.inert=false;
+ $('flipBtn').disabled=false;Sfx.cookStart();nextJeon();
+ $('flipBtn').focus({preventScroll:true});G.lastTs=performance.now();G.raf=requestAnimationFrame(frame);}
+function freezeGame(reason){
+ if(!G.playing||G.paused)return false;
+ G.paused=true;G.pauseReason=reason;G.hiddenAt=performance.now();
+ cancelAnimationFrame(G.raf);pauseTimers();Sfx.cookVol(0);return true;
+}
+function resumeGame(){
+ if(!G.playing||!G.paused)return;
+ const shift=performance.now()-G.hiddenAt;if(G.jeon){G.jeon.t0+=shift;G.jeon.lastCookTs=performance.now();}
+ G.lastTs=performance.now();G.paused=false;G.pauseReason='';resumeTimers();
+ pauseOv.classList.add('hidden');app.inert=false;Sfx.cookVol(.08);
+ $('flipBtn').focus({preventScroll:true});G.raf=requestAnimationFrame(frame);
+}
+function openPause(){
+ if(!freezeGame('manual'))return;
+ pauseSummary.textContent=`현재 ${G.score.toLocaleString('ko-KR')}점 · 완성 ${G.count}장 · ${Math.ceil(G.timeLeft)}초 남음`;
+ pauseMenu.classList.remove('hidden');pauseConfirm.classList.add('hidden');pauseOv.classList.remove('hidden');app.inert=true;
+ $('resumeBtn').focus({preventScroll:true});
+}
+function showPauseConfirm(action,text){G.pendingPauseAction=action;$('pauseConfirmText').textContent=text;
+ pauseMenu.classList.add('hidden');pauseConfirm.classList.remove('hidden');$('confirmNoBtn').focus({preventScroll:true});}
+function closePauseConfirm(){G.pendingPauseAction='';pauseConfirm.classList.add('hidden');pauseMenu.classList.remove('hidden');
+ $('resumeBtn').focus({preventScroll:true});}
+function goHome(){
+ G.playing=false;G.paused=false;G.pauseReason='';cancelAnimationFrame(G.raf);clearTimers();Sfx.cookStop();
+ app.classList.remove('finalRush','feverMode');nowHint.classList.remove('on');typeBadge.classList.remove('on');
+ pauseOv.classList.add('hidden');endOv.classList.add('hidden');startOv.classList.remove('hidden');app.inert=true;
+ say(BUB.start);document.querySelector('.typeCard.sel').focus({preventScroll:true});
+}
+function runPauseAction(){const action=G.pendingPauseAction;G.pendingPauseAction='';
+ if(action==='finish'){pauseOv.classList.add('hidden');endGame('직접 종료');}
+ else if(action==='restart')startGame();
+ else if(action==='home')goHome();
+}
+function endGame(reason='마감 완료'){
+ G.playing=false;G.paused=false;G.pauseReason='';cancelAnimationFrame(G.raf);clearTimers();Sfx.cookStop();
+ nowHint.classList.remove('on');typeBadge.classList.remove('on');app.classList.remove('finalRush','feverMode');
+ pauseOv.classList.add('hidden');countdownBurst.classList.remove('show');$('endReason').textContent=reason;
+ const isRecord=G.score>G.highScore;
+ if(isRecord){G.highScore=G.score;saveBestScore(G.highScore);updateBestScore();}
+ $('endJeon').textContent=G.count;$('endScore').textContent=G.score;
  $('endCombo').textContent='최고 콤보 x'+G.best;
+ endBestEl.textContent=(isRecord?'신기록! · ':'')+'최고 점수 '+G.highScore.toLocaleString('ko-KR');
+ endBestEl.classList.toggle('record',isRecord);
  const n=G.count>=8?3:G.count>=5?2:G.count>=2?1:0;
- $('stars').innerHTML=[1,2,3].map(i=>`<span class="${i<=n?'':'off'}">★</span>`).join('');
- $('endMsg').textContent=n>=3?'와~ 전 장인이세요!':n===2?'맛있게 부쳤어요!':n===1?'조금 아쉬워요, 한 번 더!':'앗, 전이 다 타버렸네요…';
- endOv.classList.remove('hidden');}
+ const starsEl=$('stars');starsEl.setAttribute('aria-label',`별 ${n}개 / 3개`);
+ starsEl.innerHTML=[1,2,3].map(i=>`<span aria-hidden="true" class="${i<=n?'':'off'}">★</span>`).join('');
+ $('endMsg').textContent=n>=3?'와~ 전 장인이세요!':n===2?'맛있게 부쳤어요!':n===1?'조금 아쉬워요, 한 번 더!':G.count===1?'첫 장 완성! 이제 감 잡았어요!':reason==='직접 종료'?'현재 점수로 영업을 마쳤어요.':'앗, 전이 다 타버렸네요…';
+ if(document.activeElement instanceof HTMLElement)document.activeElement.blur();
+ app.inert=true;$('flipBtn').disabled=true;endOv.classList.remove('hidden');$('retryBtn').focus({preventScroll:true});}
 
 /* ── 이벤트 ── */
 document.addEventListener('pointerdown',e=>{
- if(e.target.closest('.overlay,#flipBtn,#sfxBtn'))return;
+ if(e.target.closest('.overlay,#flipBtn,#pauseBtn,#sfxBtn'))return;
  onTap();},{passive:true});
-$('flipBtn').addEventListener('pointerdown',e=>{e.preventDefault();onTap();});
+let flipHandledByPointer=false;
+$('flipBtn').addEventListener('pointerdown',()=>{flipHandledByPointer=true;onTap();});
+$('flipBtn').addEventListener('click',()=>{if(!flipHandledByPointer)onTap();flipHandledByPointer=false;});
+$('flipBtn').addEventListener('pointerup',()=>setTimeout(()=>{flipHandledByPointer=false;},0));
+$('flipBtn').addEventListener('pointercancel',()=>{flipHandledByPointer=false;});
 $('startBtn').addEventListener('click',startGame);
 $('retryBtn').addEventListener('click',startGame);
-$('homeBtn').addEventListener('click',()=>{endOv.classList.add('hidden');startOv.classList.remove('hidden');
-say(BUB.start);});
-sfxBtn.textContent=Sfx.isMuted()?'🔇':'🔊';
-sfxBtn.addEventListener('click',()=>{Sfx.ensure();Sfx.setMuted(!Sfx.isMuted());
-sfxBtn.textContent=Sfx.isMuted()?'🔇':'🔊';});
+$('homeBtn').addEventListener('click',goHome);
+pauseBtn.addEventListener('click',openPause);
+$('resumeBtn').addEventListener('click',resumeGame);
+$('finishBtn').addEventListener('click',()=>showPauseConfirm('finish','현재 점수로 영업을 종료할까요?'));
+$('restartBtn').addEventListener('click',()=>showPauseConfirm('restart','점수와 콤보를 지우고 다시 시작할까요?'));
+$('pauseHomeBtn').addEventListener('click',()=>showPauseConfirm('home','현재 게임을 포기하고 대표 메뉴 화면으로 갈까요?'));
+$('confirmYesBtn').addEventListener('click',runPauseAction);
+$('confirmNoBtn').addEventListener('click',closePauseConfirm);
+function updateSfxButton(){const muted=Sfx.isMuted();sfxBtn.classList.toggle('muted',muted);
+ sfxBtn.setAttribute('aria-pressed',String(!muted));
+ sfxBtn.title=muted?'사운드 켜기':'사운드 끄기';}
+updateSfxButton();
+sfxBtn.addEventListener('click',()=>{Sfx.ensure();Sfx.setMuted(!Sfx.isMuted());updateSfxButton();});
 document.querySelectorAll('.typeCard').forEach(c=>{
- c.addEventListener('pointerdown',()=>{
-  document.querySelectorAll('.typeCard').forEach(x=>x.classList.remove('sel'));
-  c.classList.add('sel');
+ c.addEventListener('click',()=>{
+  document.querySelectorAll('.typeCard').forEach(x=>{x.classList.remove('sel');x.setAttribute('aria-pressed','false');});
+  c.classList.add('sel');c.setAttribute('aria-pressed','true');
   G.selType=TYPES.find(t=>t.id===c.dataset.t);});});
-/* 백그라운드로 가면 일시정지 (전 타버림/시간 점프 방지) */
+document.addEventListener('keydown',e=>{if(e.key!=='Escape'||!G.playing)return;
+ e.preventDefault();if(G.paused&&G.pauseReason==='manual'){
+  if(!pauseConfirm.classList.contains('hidden'))closePauseConfirm();else resumeGame();
+ }else if(!G.paused)openPause();});
+/* 백그라운드에서는 같은 정지 엔진을 사용하되 메뉴는 띄우지 않음 */
 document.addEventListener('visibilitychange',()=>{
  if(!G.playing)return;
- if(document.hidden){G.paused=true;G.hiddenAt=performance.now();
-  cancelAnimationFrame(G.raf);Sfx.cookVol(0);}
- else if(G.paused){const shift=performance.now()-G.hiddenAt;
-  if(G.jeon)G.jeon.t0+=shift;
-  G.lastTs=performance.now();G.paused=false;
-  G.raf=requestAnimationFrame(frame);}});
+ if(document.hidden){if(!G.paused)freezeGame('hidden');}
+ else if(G.paused&&G.pauseReason==='hidden')resumeGame();});
+document.querySelector('.typeCard.sel').focus({preventScroll:true});
 document.addEventListener('contextmenu',e=>e.preventDefault());
 </script>
 </body>
