@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 420">
+  <defs>
+    <radialGradient id="batter" cx="38%" cy="29%" r="72%"><stop stop-color="#fffbdc"/><stop offset=".42" stop-color="#f6e29d"/><stop offset=".78" stop-color="#e7bd68"/><stop offset="1" stop-color="#ad6d27"/></radialGradient>
+    <filter id="rough" x="-15%" y="-15%" width="130%" height="130%"><feTurbulence baseFrequency=".018" numOctaves="3" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="10"/><feDropShadow dx="0" dy="7" stdDeviation="5" flood-color="#5d3312" flood-opacity=".25"/></filter>
+    <filter id="grain"><feTurbulence baseFrequency=".22" numOctaves="2" seed="22" result="n"/><feComposite in="n" in2="SourceGraphic" operator="in" result="g"/><feBlend in="SourceGraphic" in2="g" mode="soft-light"/></filter>
+  </defs>
+  <path d="M211 49c66-3 134 24 151 79 17 54-10 88-3 137 6 49-44 93-101 101-61 9-96-19-148-25-54-6-83-52-70-101 11-43 6-83 39-119 35-38 76-69 132-72z" fill="url(#batter)" stroke="#ba7d32" stroke-width="6" filter="url(#rough)"/>
+  <path d="M106 120c50-47 139-57 193-24" fill="none" stroke="#fffbe5" stroke-width="14" stroke-linecap="round" opacity=".5"/>
+  <g fill="#d29d4f" opacity=".32"><circle cx="130" cy="238" r="7"/><circle cx="249" cy="285" r="5"/><circle cx="296" cy="174" r="8"/><circle cx="196" cy="122" r="4"/><circle cx="94" cy="184" r="4"/></g>
+  <g fill="#fffdf0" opacity=".65"><circle cx="155" cy="151" r="6"/><circle cx="229" cy="95" r="5"/><circle cx="268" cy="227" r="4"/></g>
+</svg>
