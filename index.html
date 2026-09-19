@@ -40,20 +40,20 @@ body{
 
 /* ── 팬 + 게이지 ─────────────────────── */
 #playArea{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;min-height:0;padding:0 16px}
-#panWrap{position:relative;width:min(78vw,350px);aspect-ratio:1;flex:none}
-#gaugeWrap{position:absolute;left:50%;top:-6%;transform:translateX(-50%);width:124%;z-index:4;pointer-events:none}
+#panWrap{position:relative;width:min(62vw,290px);aspect-ratio:887/1203;flex:none}
+#gaugeWrap{width:min(70vw,300px);margin-bottom:-16px;z-index:4;pointer-events:none}
 #gauge{width:100%;display:block;filter:drop-shadow(0 2px 2px rgba(60,35,10,.35))}
 #gauge text{font-size:14px;font-family:'Jua';fill:#7a5c3a}
-#typeBadge{position:absolute;top:16%;left:50%;transform:translateX(-50%);background:var(--brown);color:#fff;
+#typeBadge{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:var(--brown);color:#fff;
   font-size:16px;padding:3px 15px;border-radius:999px;z-index:5;box-shadow:0 3px 0 rgba(0,0,0,.2);
   opacity:0;transition:opacity .2s;white-space:nowrap}
 #typeBadge.on{opacity:1}
-#nowHint{position:absolute;top:7%;left:50%;transform:translateX(-50%) scale(0);
+#nowHint{position:absolute;top:-34px;left:50%;transform:translateX(-50%) scale(0);
   background:#ffd54a;color:#5b3a1e;font-size:20px;padding:4px 18px;border-radius:999px;
   box-shadow:0 3px 0 #d8a312;transition:transform .15s;z-index:6;white-space:nowrap}
 #nowHint.on{transform:translateX(-50%) scale(1);animation:nowPulse .4s infinite}
 @keyframes nowPulse{50%{transform:translateX(-50%) scale(1.1)}}
-#flameWrap{position:absolute;inset:-10%;z-index:0;transform-origin:50% 62%;transition:transform .6s}
+#flameWrap{position:absolute;left:-14%;right:-14%;top:-11%;bottom:24%;z-index:0;transform-origin:50% 50%;transition:transform .6s}
 #flames{width:100%;height:100%;object-fit:contain;pointer-events:none;
   animation:flick .5s ease-in-out infinite alternate}
 @keyframes flick{0%{opacity:.85;transform:scale(1)}100%{opacity:1;transform:scale(1.03)}}
@@ -140,7 +140,7 @@ body{
 @keyframes bubblePop{0%{transform:scale(.7)}70%{transform:scale(1.08)}100%{transform:scale(1)}}
 
 /* 사운드 토글 */
-#sfxBtn{position:absolute;top:76px;right:14px;z-index:20}
+#sfxBtn{position:absolute;top:76px;right:14px;z-index:9}
 
 /* ── 시작 화면 ───────────────────────── */
 #startOv{align-items:stretch;padding:0;background:#e8d5b4 url('assets/bg-scene.webp') center/cover no-repeat}
@@ -211,7 +211,8 @@ body{
   #hud{padding:8px 12px 2px}
   #vScore{font-size:34px}
   .iconBtn{width:40px;height:40px;font-size:16px}
-  #panWrap{width:min(60vw,270px,44dvh)}
+  #gaugeWrap{width:min(56vw,240px,20dvh)}
+  #panWrap{width:min(54vw,240px,34dvh)}
   #flipBtn{width:min(30vw,110px);font-size:34px;margin-bottom:6px}
   #ajRow{min-height:50px;padding-bottom:8px}
   #ajImg{width:44px;height:44px}
@@ -241,16 +242,16 @@ body{
   </header>
 
   <div id="playArea">
-    <div id="panWrap">
-      <div id="gaugeWrap">
-        <svg id="gauge" viewBox="0 0 200 126" aria-hidden="true">
+    <div id="gaugeWrap">
+      <svg id="gauge" viewBox="0 0 200 136" aria-hidden="true">
           <path id="arcRaw"   fill="none" stroke="#f3e3bd" stroke-width="16" stroke-linecap="round"/>
           <path id="arcGood"  fill="none" stroke="#7cb342" stroke-width="16" stroke-linecap="round"/>
           <path id="arcPerfect" fill="none" stroke="#ffd54a" stroke-width="16" stroke-linecap="round"/>
           <path id="arcOver"  fill="none" stroke="#e05b3a" stroke-width="16" stroke-linecap="round"/>
-          <circle id="needle" r="9" fill="#fffdf6" stroke="#5b3a1e" stroke-width="3.5"/>
+          <circle id="needle" r="8" fill="#fffdf6" stroke="#5b3a1e" stroke-width="3.5"/>
         </svg>
       </div>
+    <div id="panWrap">
       <div id="typeBadge"></div>
       <div id="nowHint">지금이야!</div>
       <div id="flameWrap"><img id="flames" src="assets/flames.webp" alt=""></div>
@@ -429,7 +430,7 @@ const IMG={smile:'assets/ajumma-smile.webp',laugh:'assets/ajumma-laugh.webp',pro
 surprised:'assets/ajumma-surprised.webp',worried:'assets/ajumma-worried.webp',expect:'assets/ajumma-expect.webp'};
 
 /* 게이지 arc (팬 위에 걸치는 호) */
-const GA={cx:100,cy:104,r:82,a0:196,a1:344}; // deg, 상단을 크게 도는 호
+const GA={cx:100,cy:100,r:72,a0:155,a1:385}; // deg, 상단을 크게 도는 호
 function arcPath(t0,t1){const rad=d=>d*Math.PI/180;
 const x0=GA.cx+GA.r*Math.cos(rad(GA.a0+(GA.a1-GA.a0)*t0));
 const y0=GA.cy+GA.r*Math.sin(rad(GA.a0+(GA.a1-GA.a0)*t0));
